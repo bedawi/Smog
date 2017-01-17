@@ -1,7 +1,9 @@
-package de.benjamindahlhoff.smog;
+package de.benjamindahlhoff.smog.UI;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+
+import de.benjamindahlhoff.smog.R;
 
 public class MainActivity extends AppCompatActivity {
 

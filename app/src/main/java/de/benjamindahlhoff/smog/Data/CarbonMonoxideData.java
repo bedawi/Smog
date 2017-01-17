@@ -4,12 +4,12 @@ package de.benjamindahlhoff.smog.Data;
  * Created by Benjamin Dahlhoff on 17.01.17.
  */
 
-public class CarbonMonixideData {
+public class CarbonMonoxideData {
     private double mCarbonMonoxideVolumeMixingRatio;
     private double mAtmosphericPressure;
     private double mMeasurementPrecision;
 
-    public CarbonMonixideData(double carbonMonoxideVolumeMixingRatio, double atmosphericPressure, double measurementPrecision) {
+    public CarbonMonoxideData(double carbonMonoxideVolumeMixingRatio, double atmosphericPressure, double measurementPrecision) {
         mCarbonMonoxideVolumeMixingRatio = carbonMonoxideVolumeMixingRatio;
         mAtmosphericPressure = atmosphericPressure;
         mMeasurementPrecision = measurementPrecision;
