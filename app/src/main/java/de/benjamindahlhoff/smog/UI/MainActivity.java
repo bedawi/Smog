@@ -1,8 +1,14 @@
 package de.benjamindahlhoff.smog.UI;
 
+import android.Manifest;
 import android.content.Context;
+import android.content.pm.PackageManager;
+import android.location.Location;
+import android.location.LocationManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -30,6 +36,7 @@ import okhttp3.Response;
 
 public class MainActivity extends AppCompatActivity {
     public final static String TAG = MainActivity.class.getSimpleName();
+    private static final int PERMISSION_ACCESS_COARSE_LOCATION = 1;
 
     // All Pollution-Data goes into the Pollution class
     private Pollution mPollution = new Pollution();
@@ -45,6 +52,8 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
 
+        getPosition();
+
         // Pull CO-Data (Unfortunately this provider does not offer data for precise positions)
         String latitude = "50";
         String longitude = "8";
@@ -53,6 +62,28 @@ public class MainActivity extends AppCompatActivity {
         pullFromServer(apiUrl, "CO_from_OpenWeatherMap");
 
 
+    }
+
+    private void getPosition() {
+        String latitude;
+        String longitude;
+
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION)
+                != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, new String[] { Manifest.permission.ACCESS_COARSE_LOCATION },
+                    PERMISSION_ACCESS_COARSE_LOCATION);
+        }
+
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION)
+                == PackageManager.PERMISSION_GRANTED) {
+            LocationManager locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
+            String locationProvider = LocationManager.NETWORK_PROVIDER;
+            Location lastKnownLocation = locationManager.getLastKnownLocation(locationProvider);
+            if (lastKnownLocation != null) {
+                latitude = lastKnownLocation.getLatitude();
+                longitude = lastKnownLocation.getLongitude();
+            }
+        }
     }
 
     private void pullFromServer(String url, final String service) {
@@ -124,9 +155,10 @@ public class MainActivity extends AppCompatActivity {
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                mCoValueView.setText(String.valueOf(mPollution.getCarbonMonoxide().getCarbonMonoxideVolumeMixingRatio()));
+                //Math.round(mPollution.getCarbonMonoxide().getCarbonMonoxideVolumeMixingRatio() *100.0)/100.0
+                mCoValueView.setText(getString(R.string.mixingRatio)+": "+ String.valueOf(Math.round(mPollution.getCarbonMonoxide().getCarbonMonoxideVolumeMixingRatio()*1000000000))+ " ppb");
                 mCoPrecisionView.setText(String.valueOf(mPollution.getCarbonMonoxide().getMeasurementPrecision()));
-                mCoPressureView.setText(String.valueOf(mPollution.getCarbonMonoxide().getMeasurementPrecision()));
+                mCoPressureView.setText(getString(R.string.pressure)+" "+ String.valueOf(mPollution.getCarbonMonoxide().getAtmosphericPressure())+" hPa");
             }
         });
     }
