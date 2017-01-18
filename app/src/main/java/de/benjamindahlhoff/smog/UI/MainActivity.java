@@ -14,17 +14,15 @@ import android.os.Bundle;
 import android.util.Log;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-
 import java.io.IOException;
-
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import de.benjamindahlhoff.smog.Data.CarbonMonoxideData;
 import de.benjamindahlhoff.smog.Data.Pollution;
+import de.benjamindahlhoff.smog.Data.Position;
 import de.benjamindahlhoff.smog.R;
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -40,6 +38,7 @@ public class MainActivity extends AppCompatActivity {
 
     // All Pollution-Data goes into the Pollution class
     private Pollution mPollution = new Pollution();
+    private Position mPosition = new Position();
 
     // Views for Carbonmonoxide:
     @BindView(R.id.coValueView) TextView mCoValueView;
@@ -52,39 +51,41 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
 
-        getPosition();
+
+        getCoarsePosition();
+
+
 
         // Pull CO-Data (Unfortunately this provider does not offer data for precise positions)
-        String latitude = "50";
-        String longitude = "8";
-        String apiUrl = "http://api.openweathermap.org/pollution/v1/co/" +latitude+ "," +longitude+ "/current.json?appid="+getString(R.string.openweathermap);
+        String apiUrl = "http://api.openweathermap.org/pollution/v1/co/" +mPosition.getLatitude()+ "," +mPosition.getLongitude()+ "/current.json?appid="+getString(R.string.openweathermap);
         // To keep things simple, every request is done through the method "pullFromServer"
         pullFromServer(apiUrl, "CO_from_OpenWeatherMap");
 
 
     }
 
-    private void getPosition() {
-        String latitude;
-        String longitude;
-
+    private void getCoarsePosition() {
+        // Checking if permission to get coarse location was granted.
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION)
                 != PackageManager.PERMISSION_GRANTED) {
+            // If not: Ask for it!
             ActivityCompat.requestPermissions(this, new String[] { Manifest.permission.ACCESS_COARSE_LOCATION },
                     PERMISSION_ACCESS_COARSE_LOCATION);
         }
 
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION)
                 == PackageManager.PERMISSION_GRANTED) {
+            // If permission was granted, get the Position
             LocationManager locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
             String locationProvider = LocationManager.NETWORK_PROVIDER;
             Location lastKnownLocation = locationManager.getLastKnownLocation(locationProvider);
             if (lastKnownLocation != null) {
-                latitude = lastKnownLocation.getLatitude();
-                longitude = lastKnownLocation.getLongitude();
+                mPosition.setLatitude(lastKnownLocation.getLatitude());
+                mPosition.setLongitude(lastKnownLocation.getLongitude());
             }
         }
     }
+
 
     private void pullFromServer(String url, final String service) {
         if (isNetworkAvailable()) {
