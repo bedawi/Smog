@@ -21,6 +21,8 @@ import java.io.IOException;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import de.benjamindahlhoff.smog.Data.CarbonMonoxideData;
+import de.benjamindahlhoff.smog.Data.Particulates;
+import de.benjamindahlhoff.smog.Data.ParticulatesData;
 import de.benjamindahlhoff.smog.Data.Pollution;
 import de.benjamindahlhoff.smog.Data.Position;
 import de.benjamindahlhoff.smog.R;
@@ -30,15 +32,21 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
 
+import static android.os.Build.VERSION_CODES.M;
 
 
 public class MainActivity extends AppCompatActivity {
     public final static String TAG = MainActivity.class.getSimpleName();
     private static final int PERMISSION_ACCESS_COARSE_LOCATION = 1;
 
+    // Our current position is stored in
+    private Position mCurrentPosition = new Position();
+
     // All Pollution-Data goes into the Pollution class
     private Pollution mPollution = new Pollution();
-    private Position mPosition = new Position();
+
+    // Feinstaub
+    private Particulates[] mParticulates;
 
     // Views for Carbonmonoxide:
     @BindView(R.id.coValueView) TextView mCoValueView;
@@ -55,11 +63,8 @@ public class MainActivity extends AppCompatActivity {
         getCoarsePosition();
 
 
-
-        // Pull CO-Data (Unfortunately this provider does not offer data for precise positions)
-        String apiUrl = "http://api.openweathermap.org/pollution/v1/co/" +mPosition.getLatitude()+ "," +mPosition.getLongitude()+ "/current.json?appid="+getString(R.string.openweathermap);
-        // To keep things simple, every request is done through the method "pullFromServer"
-        pullFromServer(apiUrl, "CO_from_OpenWeatherMap");
+        pullFromServer("http://api.openweathermap.org/pollution/v1/co/" + mCurrentPosition.getLatitude()+ "," + mCurrentPosition.getLongitude()+ "/current.json?appid="+getString(R.string.openweathermap), "CO_from_OpenWeatherMap");
+        pullFromServer("http://api.luftdaten.info/static/v1/data.json", "Feinstaub_from_LuftdatenInfo");
 
 
     }
@@ -80,8 +85,8 @@ public class MainActivity extends AppCompatActivity {
             String locationProvider = LocationManager.NETWORK_PROVIDER;
             Location lastKnownLocation = locationManager.getLastKnownLocation(locationProvider);
             if (lastKnownLocation != null) {
-                mPosition.setLatitude(lastKnownLocation.getLatitude());
-                mPosition.setLongitude(lastKnownLocation.getLongitude());
+                mCurrentPosition.setLatitude(lastKnownLocation.getLatitude());
+                mCurrentPosition.setLongitude(lastKnownLocation.getLongitude());
             }
         }
     }
@@ -150,17 +155,61 @@ public class MainActivity extends AppCompatActivity {
             CarbonMonoxideData carbonMonoxideData = new CarbonMonoxideData(CODataset.getDouble("value"), CODataset.getDouble("pressure"), CODataset.getDouble("precision"));
             Log.v(TAG, "Pressure: " + carbonMonoxideData.getAtmosphericPressure());
             mPollution.setCarbonMonoxide(carbonMonoxideData);
+
+            // Time to bring the newly acquired data onto the screen:
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    //Math.round(mPollution.getCarbonMonoxide().getCarbonMonoxideVolumeMixingRatio() *100.0)/100.0
+                    mCoValueView.setText(getString(R.string.mixingRatio)+": "+ String.valueOf(Math.round(mPollution.getCarbonMonoxide().getCarbonMonoxideVolumeMixingRatio()*1000000000))+ " ppb");
+                    mCoPrecisionView.setText(String.valueOf(mPollution.getCarbonMonoxide().getMeasurementPrecision()));
+                    mCoPressureView.setText(getString(R.string.pressure)+" "+ String.valueOf(mPollution.getCarbonMonoxide().getAtmosphericPressure())+" hPa");
+                }
+            });
+        }
+        if (service == "Feinstaub_from_LuftdatenInfo") {
+            // Data comes as huge Array:
+            JSONArray ParticulatesData = new JSONArray(data);
+
+            mParticulates = new Particulates[ParticulatesData.length()];
+
+            // Lets loop through the data:
+            for (int i = 0; i<ParticulatesData.length(); i++) {
+                // Grab object at position i
+                JSONObject ParticulatesObject = ParticulatesData.getJSONObject(i);
+
+                // Inside every object there is another array with measurement data
+                JSONArray MeasurementsArray = ParticulatesObject.getJSONArray("sensordatavalues");
+
+                // Lets create tmpParticulatesData and fill it with the measurement data
+                ParticulatesData[] tmpParticulatesData = new ParticulatesData[MeasurementsArray.length()];
+                for (int j = 0; j < MeasurementsArray.length(); j++)
+                {
+                    JSONObject tempMeasurementsObject = MeasurementsArray.getJSONObject(j);
+
+                    ParticulatesData particulatesData = new ParticulatesData();
+                    particulatesData.setValue(tempMeasurementsObject.getDouble("value"));
+                    particulatesData.setValueType(tempMeasurementsObject.getString("value_type"));
+
+                    tmpParticulatesData[j] = particulatesData;
+                }
+
+                // what else can we get?
+                JSONObject LocationObject = ParticulatesObject.getJSONObject("location");
+                double tmpLatitute = LocationObject.getDouble("latitude");
+                double tmpLogitude = LocationObject.getDouble("longitude");
+                Position tmpPosition = new Position(tmpLatitute, tmpLogitude);
+
+                String tmpTimestamp = ParticulatesObject.getString("timestamp");
+
+                Particulates tmpParticulates = new Particulates(tmpTimestamp, tmpPosition, tmpParticulatesData);
+                mParticulates[i] = tmpParticulates;
+
+                Log.v(TAG, "Finished: " + i);
+            }
+
         }
 
-        // Time to bring the newly acquired data onto the screen:
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                //Math.round(mPollution.getCarbonMonoxide().getCarbonMonoxideVolumeMixingRatio() *100.0)/100.0
-                mCoValueView.setText(getString(R.string.mixingRatio)+": "+ String.valueOf(Math.round(mPollution.getCarbonMonoxide().getCarbonMonoxideVolumeMixingRatio()*1000000000))+ " ppb");
-                mCoPrecisionView.setText(String.valueOf(mPollution.getCarbonMonoxide().getMeasurementPrecision()));
-                mCoPressureView.setText(getString(R.string.pressure)+" "+ String.valueOf(mPollution.getCarbonMonoxide().getAtmosphericPressure())+" hPa");
-            }
-        });
+
     }
 }
