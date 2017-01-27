@@ -7,7 +7,7 @@ package de.benjamindahlhoff.smog.Data;
  */
 
 
-public class ParticulatesData {
+public class ParticulatesValues {
     private double mValue;
     private String mValueType;
 

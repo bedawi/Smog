@@ -1,8 +1,5 @@
 package de.benjamindahlhoff.smog.Data;
 
-import de.benjamindahlhoff.smog.UI.MainActivity;
-
-
 public class Position {
     private double mLatitude;
     private double mLongitude;
@@ -34,11 +31,13 @@ public class Position {
     }
 
     public int distanceFromPosition(double latitude, double longitude) {
+        // Throw a latitude and a longitude into this an get the distance to the current position
+        // in Kilometers in return:
         return (int) Math.round(distance(mLatitude, mLongitude, latitude, longitude, "K"));
     }
 
     /*
-     * This Code is licensed under the LGPLv3-License from http://www.geodatasource.com/developers/java
+     *  This Code is licensed under the LGPLv3-License from http://www.geodatasource.com/developers/java
      *  Units: M: Miles, K: Kilometers, N: Nautical Miles
      */
     private static double distance(double lat1, double lon1, double lat2, double lon2, String unit) {
@@ -56,16 +55,10 @@ public class Position {
         return (dist);
     }
 
-    /*:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::*/
-	/*::	This function converts decimal degrees to radians						 :*/
-	/*:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::*/
     private static double deg2rad(double deg) {
         return (deg * Math.PI / 180.0);
     }
 
-    /*:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::*/
-	/*::	This function converts radians to decimal degrees						 :*/
-	/*:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::*/
     private static double rad2deg(double rad) {
         return (rad * 180 / Math.PI);
     }

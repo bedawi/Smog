@@ -22,7 +22,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import de.benjamindahlhoff.smog.Data.CarbonMonoxideData;
 import de.benjamindahlhoff.smog.Data.Particulates;
-import de.benjamindahlhoff.smog.Data.ParticulatesData;
+import de.benjamindahlhoff.smog.Data.ParticulatesValues;
 import de.benjamindahlhoff.smog.Data.Pollution;
 import de.benjamindahlhoff.smog.Data.Position;
 import de.benjamindahlhoff.smog.R;
@@ -31,8 +31,6 @@ import okhttp3.Callback;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
-
-import static android.os.Build.VERSION_CODES.M;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -115,7 +113,8 @@ public class MainActivity extends AppCompatActivity {
                         if (response.isSuccessful()) {
                             extractDataForService(service, jsonData);
                         } else {
-                            alertUserAboutError();
+                            //alertUserAboutError();
+                            Log.e(TAG, "Error: Received invalid data!");
                         }
                     } catch (IOException e) {
                         Log.e(TAG, getString(R.string.exception_caught), e);
@@ -175,47 +174,49 @@ public class MainActivity extends AppCompatActivity {
 
             // Lets loop through the data:
             for (int i = 0; i<ParticulatesData.length(); i++) {
-                // Grab object at position i
-                JSONObject ParticulatesObject = ParticulatesData.getJSONObject(i);
-
-                // Inside every object there is another array with measurement data
-                JSONArray MeasurementsArray = ParticulatesObject.getJSONArray("sensordatavalues");
-
-                // Lets create tmpParticulatesData and fill it with the measurement data
-                ParticulatesData[] tmpParticulatesData = new ParticulatesData[MeasurementsArray.length()];
-                for (int j = 0; j < MeasurementsArray.length(); j++)
-                {
-                    JSONObject tempMeasurementsObject = MeasurementsArray.getJSONObject(j);
-
-                    ParticulatesData particulatesData = new ParticulatesData();
-                    particulatesData.setValue(tempMeasurementsObject.getDouble("value"));
-                    particulatesData.setValueType(tempMeasurementsObject.getString("value_type"));
-
-                    tmpParticulatesData[j] = particulatesData;
-                }
-
-                // what else can we get?
-                double tmpLatitute = 0;
-                double tmpLogitude = 0;
 
                 try {
+                    // Grab object at position i
+                    JSONObject ParticulatesObject = ParticulatesData.getJSONObject(i);
+
+                    // Inside every object there is another array with measurement data
+                    JSONArray MeasurementsArray = ParticulatesObject.getJSONArray("sensordatavalues");
+
+                    // Lets create tmpParticulatesValues and fill it with the measurement data
+                    ParticulatesValues[] tmpParticulatesValues = new ParticulatesValues[MeasurementsArray.length()];
+                    for (int j = 0; j < MeasurementsArray.length(); j++)
+                    {
+                        JSONObject tempMeasurementsObject = MeasurementsArray.getJSONObject(j);
+
+                        ParticulatesValues particulatesValues = new ParticulatesValues();
+                        particulatesValues.setValue(tempMeasurementsObject.getDouble("value"));
+                        particulatesValues.setValueType(tempMeasurementsObject.getString("value_type"));
+
+                        tmpParticulatesValues[j] = particulatesValues;
+                    }
+
+                    // what else can we get?
+                    double tmpLatitute = 0;
+                    double tmpLogitude = 0;
+
+
                     JSONObject LocationObject = ParticulatesObject.getJSONObject("location");
                     tmpLatitute = LocationObject.getDouble("latitude");
                     tmpLogitude = LocationObject.getDouble("longitude");
 
-                } catch (Exception e) {
-                    Log.e(TAG, "Error: " + e);
+                    Position tmpPosition = new Position(tmpLatitute, tmpLogitude);
+                    Log.v(TAG, "Distance: "+ String.valueOf(mCurrentPosition.distanceFromPosition(tmpLatitute, tmpLogitude)) + " Km");
+
+                    String tmpTimestamp = ParticulatesObject.getString("timestamp");
+
+                    Particulates tmpParticulates = new Particulates(tmpTimestamp, tmpPosition, tmpParticulatesValues);
+                    mParticulates[i] = tmpParticulates;
+
+                    //Log.v(TAG, "Finished: " + i);
+                } catch (JSONException e) {
+                    Log.e(TAG, "Error! Skipping this entry #"+i);
                     //e.printStackTrace();
                 }
-                Position tmpPosition = new Position(tmpLatitute, tmpLogitude);
-                Log.v(TAG, "Distance: "+ String.valueOf(mCurrentPosition.distanceFromPosition(tmpLatitute, tmpLogitude)) + " Km");
-
-                String tmpTimestamp = ParticulatesObject.getString("timestamp");
-
-                Particulates tmpParticulates = new Particulates(tmpTimestamp, tmpPosition, tmpParticulatesData);
-                mParticulates[i] = tmpParticulates;
-
-                //Log.v(TAG, "Finished: " + i);
             }
 
         }

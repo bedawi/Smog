@@ -9,12 +9,12 @@ package de.benjamindahlhoff.smog.Data;
 public class Particulates {
     private String mTimeStamp; // when was it measured?
     private Position mPosition; // where was it measured?
-    private ParticulatesData[] mParticulatesData; // what data was measured?
+    private ParticulatesValues[] mParticulatesValues; // what data was measured?
 
-    public Particulates(String timeStamp, Position position, ParticulatesData[] particulatesData) {
+    public Particulates(String timeStamp, Position position, ParticulatesValues[] particulatesValues) {
         mTimeStamp = timeStamp;
         mPosition = position;
-        mParticulatesData = particulatesData;
+        mParticulatesValues = particulatesValues;
     }
 
     public String getTimeStamp() {
@@ -33,11 +33,11 @@ public class Particulates {
         mPosition = position;
     }
 
-    public ParticulatesData[] getParticulatesData() {
-        return mParticulatesData;
+    public ParticulatesValues[] getParticulatesValues() {
+        return mParticulatesValues;
     }
 
-    public void setParticulatesData(ParticulatesData[] particulatesData) {
-        mParticulatesData = particulatesData;
+    public void setParticulatesValues(ParticulatesValues[] particulatesValues) {
+        mParticulatesValues = particulatesValues;
     }
 }
