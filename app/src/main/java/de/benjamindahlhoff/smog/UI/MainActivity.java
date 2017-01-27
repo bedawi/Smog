@@ -195,17 +195,27 @@ public class MainActivity extends AppCompatActivity {
                 }
 
                 // what else can we get?
-                JSONObject LocationObject = ParticulatesObject.getJSONObject("location");
-                double tmpLatitute = LocationObject.getDouble("latitude");
-                double tmpLogitude = LocationObject.getDouble("longitude");
+                double tmpLatitute = 0;
+                double tmpLogitude = 0;
+
+                try {
+                    JSONObject LocationObject = ParticulatesObject.getJSONObject("location");
+                    tmpLatitute = LocationObject.getDouble("latitude");
+                    tmpLogitude = LocationObject.getDouble("longitude");
+
+                } catch (Exception e) {
+                    Log.e(TAG, "Error: " + e);
+                    //e.printStackTrace();
+                }
                 Position tmpPosition = new Position(tmpLatitute, tmpLogitude);
+                Log.v(TAG, "Distance: "+ String.valueOf(mCurrentPosition.distanceFromPosition(tmpLatitute, tmpLogitude)) + " Km");
 
                 String tmpTimestamp = ParticulatesObject.getString("timestamp");
 
                 Particulates tmpParticulates = new Particulates(tmpTimestamp, tmpPosition, tmpParticulatesData);
                 mParticulates[i] = tmpParticulates;
 
-                Log.v(TAG, "Finished: " + i);
+                //Log.v(TAG, "Finished: " + i);
             }
 
         }
