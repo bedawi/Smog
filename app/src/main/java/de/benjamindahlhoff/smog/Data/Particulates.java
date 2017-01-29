@@ -10,11 +10,19 @@ public class Particulates {
     private String mTimeStamp; // when was it measured?
     private Position mPosition; // where was it measured?
     private ParticulatesValues[] mParticulatesValues; // what data was measured?
+    private int mDistance; // distance to station in KM
 
     public Particulates(String timeStamp, Position position, ParticulatesValues[] particulatesValues) {
         mTimeStamp = timeStamp;
         mPosition = position;
         mParticulatesValues = particulatesValues;
+    }
+
+    public Particulates(String timeStamp, Position position, ParticulatesValues[] particulatesValues, int distance) {
+        mTimeStamp = timeStamp;
+        mPosition = position;
+        mParticulatesValues = particulatesValues;
+        mDistance = distance;
     }
 
     public String getTimeStamp() {
@@ -40,4 +48,13 @@ public class Particulates {
     public void setParticulatesValues(ParticulatesValues[] particulatesValues) {
         mParticulatesValues = particulatesValues;
     }
+
+    public int getDistance() {
+        return mDistance;
+    }
+
+    public void setDistance(int distance) {
+        mDistance = distance;
+    }
+
 }

@@ -18,6 +18,10 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import de.benjamindahlhoff.smog.Data.CarbonMonoxideData;
@@ -44,7 +48,8 @@ public class MainActivity extends AppCompatActivity {
     private Pollution mPollution = new Pollution();
 
     // Feinstaub
-    private Particulates[] mParticulates;
+    //private Particulates[] mParticulates;
+    ArrayList<Particulates> mParticulatesArrayList = new ArrayList<Particulates>();
 
     // Views for Carbonmonoxide:
     @BindView(R.id.coValueView) TextView mCoValueView;
@@ -170,13 +175,11 @@ public class MainActivity extends AppCompatActivity {
             // Data comes as huge Array:
             JSONArray ParticulatesData = new JSONArray(data);
 
-            mParticulates = new Particulates[ParticulatesData.length()];
-
             // Lets loop through the data:
             for (int i = 0; i<ParticulatesData.length(); i++) {
 
                 try {
-                    // Grab object at position i
+                    // Grab object number i
                     JSONObject ParticulatesObject = ParticulatesData.getJSONObject(i);
 
                     // Inside every object there is another array with measurement data
@@ -195,29 +198,37 @@ public class MainActivity extends AppCompatActivity {
                         tmpParticulatesValues[j] = particulatesValues;
                     }
 
-                    // what else can we get?
-                    double tmpLatitute = 0;
-                    double tmpLogitude = 0;
-
+                    // Get GPS Position, timestamp, and calculate distance to user's
+                    // current location
 
                     JSONObject LocationObject = ParticulatesObject.getJSONObject("location");
-                    tmpLatitute = LocationObject.getDouble("latitude");
-                    tmpLogitude = LocationObject.getDouble("longitude");
-
+                    double tmpLatitute = LocationObject.getDouble("latitude");
+                    double tmpLogitude = LocationObject.getDouble("longitude");
                     Position tmpPosition = new Position(tmpLatitute, tmpLogitude);
-                    Log.v(TAG, "Distance: "+ String.valueOf(mCurrentPosition.distanceFromPosition(tmpLatitute, tmpLogitude)) + " Km");
-
                     String tmpTimestamp = ParticulatesObject.getString("timestamp");
-
-                    Particulates tmpParticulates = new Particulates(tmpTimestamp, tmpPosition, tmpParticulatesValues);
-                    mParticulates[i] = tmpParticulates;
-
-                    //Log.v(TAG, "Finished: " + i);
+                    Particulates tmpParticulates = new Particulates(tmpTimestamp, tmpPosition, tmpParticulatesValues, mCurrentPosition.distanceFromPosition(tmpLatitute, tmpLogitude));
+                    mParticulatesArrayList.add(tmpParticulates);
                 } catch (JSONException e) {
                     Log.e(TAG, "Error! Skipping this entry #"+i);
                     //e.printStackTrace();
                 }
             }
+            // Sorting Data, nearest first.
+            Collections.sort(mParticulatesArrayList, new Comparator<Particulates>() {
+                @Override
+                public int compare(Particulates o1, Particulates o2) {
+                    //int returnValue = 0;
+                    if (Integer.valueOf(o1.getDistance()) > Integer.valueOf(o2.getDistance())) {
+                        return 1;
+                    }
+                    if (Integer.valueOf(o1.getDistance()) < Integer.valueOf(o2.getDistance())) {
+                        return -1;
+                    }
+                    return 0;
+                }
+            });
+            Log.v(TAG, "Done Sorting! Next station is " + mParticulatesArrayList.get(0).getDistance() + " KM away");
+
 
         }
 
