@@ -25,8 +25,7 @@ import java.util.Comparator;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import de.benjamindahlhoff.smog.Data.CarbonMonoxideData;
-import de.benjamindahlhoff.smog.Data.Particulates;
-import de.benjamindahlhoff.smog.Data.ParticulatesValues;
+import de.benjamindahlhoff.smog.Data.FeinstaubStations;
 import de.benjamindahlhoff.smog.Data.Pollution;
 import de.benjamindahlhoff.smog.Data.Position;
 import de.benjamindahlhoff.smog.R;
@@ -48,13 +47,17 @@ public class MainActivity extends AppCompatActivity {
     private Pollution mPollution = new Pollution();
 
     // Feinstaub
-    //private Particulates[] mParticulates;
-    ArrayList<Particulates> mParticulatesArrayList = new ArrayList<Particulates>();
+    private FeinstaubStations mFeinstaubStations = new FeinstaubStations();
 
     // Views for Carbonmonoxide:
     @BindView(R.id.coValueView) TextView mCoValueView;
     @BindView(R.id.coPrecisionView) TextView mCoPrecisionView;
     @BindView(R.id.coPressureView) TextView mCoPressureView;
+    @BindView(R.id.p1ValueView) TextView mP1ValueView;
+    @BindView(R.id.p2ValueView) TextView mP2ValueView;
+    @BindView(R.id.humidityView) TextView mHumidityView;
+    @BindView(R.id.temperatureValueView) TextView mTemperatureView;
+    @BindView(R.id.distanceView) TextView mDistanceView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,9 +65,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
 
-
         getCoarsePosition();
-
 
         pullFromServer("http://api.openweathermap.org/pollution/v1/co/" + mCurrentPosition.getLatitude()+ "," + mCurrentPosition.getLongitude()+ "/current.json?appid="+getString(R.string.openweathermap), "CO_from_OpenWeatherMap");
         pullFromServer("http://api.luftdaten.info/static/v1/data.json", "Feinstaub_from_LuftdatenInfo");
@@ -90,6 +91,7 @@ public class MainActivity extends AppCompatActivity {
             if (lastKnownLocation != null) {
                 mCurrentPosition.setLatitude(lastKnownLocation.getLatitude());
                 mCurrentPosition.setLongitude(lastKnownLocation.getLongitude());
+                mFeinstaubStations.setCurrentPosition(mCurrentPosition);
             }
         }
     }
@@ -175,62 +177,24 @@ public class MainActivity extends AppCompatActivity {
             // Data comes as huge Array:
             JSONArray ParticulatesData = new JSONArray(data);
 
-            // Lets loop through the data:
+            // Lets loop through the data and add the stations to the List.
             for (int i = 0; i<ParticulatesData.length(); i++) {
-
-                try {
-                    // Grab object number i
-                    JSONObject ParticulatesObject = ParticulatesData.getJSONObject(i);
-
-                    // Inside every object there is another array with measurement data
-                    JSONArray MeasurementsArray = ParticulatesObject.getJSONArray("sensordatavalues");
-
-                    // Lets create tmpParticulatesValues and fill it with the measurement data
-                    ParticulatesValues[] tmpParticulatesValues = new ParticulatesValues[MeasurementsArray.length()];
-                    for (int j = 0; j < MeasurementsArray.length(); j++)
-                    {
-                        JSONObject tempMeasurementsObject = MeasurementsArray.getJSONObject(j);
-
-                        ParticulatesValues particulatesValues = new ParticulatesValues();
-                        particulatesValues.setValue(tempMeasurementsObject.getDouble("value"));
-                        particulatesValues.setValueType(tempMeasurementsObject.getString("value_type"));
-
-                        tmpParticulatesValues[j] = particulatesValues;
-                    }
-
-                    // Get GPS Position, timestamp, and calculate distance to user's
-                    // current location
-
-                    JSONObject LocationObject = ParticulatesObject.getJSONObject("location");
-                    double tmpLatitute = LocationObject.getDouble("latitude");
-                    double tmpLogitude = LocationObject.getDouble("longitude");
-                    Position tmpPosition = new Position(tmpLatitute, tmpLogitude);
-                    String tmpTimestamp = ParticulatesObject.getString("timestamp");
-                    Particulates tmpParticulates = new Particulates(tmpTimestamp, tmpPosition, tmpParticulatesValues, mCurrentPosition.distanceFromPosition(tmpLatitute, tmpLogitude));
-                    mParticulatesArrayList.add(tmpParticulates);
-                } catch (JSONException e) {
-                    Log.e(TAG, "Error! Skipping this entry #"+i);
-                    //e.printStackTrace();
-                }
+                mFeinstaubStations.AddDataToStation(ParticulatesData.getJSONObject(i));
             }
-            // Sorting Data, nearest first.
-            Collections.sort(mParticulatesArrayList, new Comparator<Particulates>() {
+            mFeinstaubStations.sortByDistance();
+
+            runOnUiThread(new Runnable() {
                 @Override
-                public int compare(Particulates o1, Particulates o2) {
-                    //int returnValue = 0;
-                    if (Integer.valueOf(o1.getDistance()) > Integer.valueOf(o2.getDistance())) {
-                        return 1;
-                    }
-                    if (Integer.valueOf(o1.getDistance()) < Integer.valueOf(o2.getDistance())) {
-                        return -1;
-                    }
-                    return 0;
+                public void run() {
+                    mP1ValueView.setText("P1: "+ String.valueOf(mFeinstaubStations.getStationByIndex(0).getP1Value())+ " µg/m³");
+                    mP2ValueView.setText("P2: "+ String.valueOf(mFeinstaubStations.getStationByIndex(0).getP2Value())+ " µg/m³");
+                    mTemperatureView.setText("Temp: "+ String.valueOf(mFeinstaubStations.getStationByIndex(0).getTemperature()) +"°C");
+                    mHumidityView.setText("Humidity: "+ String.valueOf(mFeinstaubStations.getStationByIndex(0).getHumidity()));
+                    mDistanceView.setText("Distance: "+String.valueOf(mFeinstaubStations.getStationByIndex(0).getDistance()) +" KM");
+
                 }
             });
-            Log.v(TAG, "Done Sorting! Next station is " + mParticulatesArrayList.get(0).getDistance() + " KM away");
-
-
-        }
+        } // *** END if (service == "Feinstaub_from_LuftdatenInfo")
 
 
     }
