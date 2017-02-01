@@ -18,9 +18,6 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -182,12 +179,13 @@ public class MainActivity extends AppCompatActivity {
                 mFeinstaubStations.AddDataToStation(ParticulatesData.getJSONObject(i));
             }
             mFeinstaubStations.sortByDistance();
+            mFeinstaubStations.calculateMeans();
 
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    mP1ValueView.setText("P1: "+ String.valueOf(mFeinstaubStations.getStationByIndex(0).getP1Value())+ " µg/m³");
-                    mP2ValueView.setText("P2: "+ String.valueOf(mFeinstaubStations.getStationByIndex(0).getP2Value())+ " µg/m³");
+                    mP1ValueView.setText("PM10: "+ String.valueOf(mFeinstaubStations.getStationByIndex(0).getP1Mean())+ " µg/m³");
+                    mP2ValueView.setText("PM2,5: "+ String.valueOf(mFeinstaubStations.getStationByIndex(0).getP2Mean())+ " µg/m³");
                     mTemperatureView.setText("Temp: "+ String.valueOf(mFeinstaubStations.getStationByIndex(0).getTemperature()) +"°C");
                     mHumidityView.setText("Humidity: "+ String.valueOf(mFeinstaubStations.getStationByIndex(0).getHumidity()));
                     mDistanceView.setText("Distance: "+String.valueOf(mFeinstaubStations.getStationByIndex(0).getDistance()) +" KM");

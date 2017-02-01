@@ -1,5 +1,7 @@
 package de.benjamindahlhoff.smog.Data;
 
+import java.util.ArrayList;
+
 /**
  * Created by Benjamin Dahlhoff on 31.01.17.
  * This class holds data for each individual Measurement Station of the Stuttgart Air Pollution
@@ -14,8 +16,10 @@ public class FeinstaubStation {
     private double mHumidity;
     private double mTemperature;
     private Position mPosition;
-    private double mP1Value;
-    private double mP2Value;
+    private ArrayList<Double> mP1Values = new ArrayList<>();
+    private ArrayList<Double> mP2Values = new ArrayList<>();
+    private double mP1Mean;
+    private double mP2Mean;
     private int mMaxMicro;
     private int mMinMicro;
     private int mSamples;
@@ -61,20 +65,36 @@ public class FeinstaubStation {
         mPosition = position;
     }
 
-    public double getP1Value() {
-        return mP1Value;
+    public ArrayList<Double> getP1Values() {
+        return mP1Values;
     }
 
-    public void setP1Value(double p1Value) {
-        mP1Value = p1Value;
+    public void addP1Value(double p1Value) {
+        mP1Values.add(p1Value);
     }
 
-    public double getP2Value() {
-        return mP2Value;
+    public ArrayList<Double> getP2Values() {
+        return mP2Values;
     }
 
-    public void setP2Value(double p2Value) {
-        mP2Value = p2Value;
+    public void addP2Value(double p2Value) {
+        mP2Values.add(p2Value);
+    }
+
+    public double getP1Mean() {
+        return mP1Mean;
+    }
+
+    public void setP1Mean(double p1Mean) {
+        mP1Mean = p1Mean;
+    }
+
+    public double getP2Mean() {
+        return mP2Mean;
+    }
+
+    public void setP2Mean(double p2Mean) {
+        mP2Mean = p2Mean;
     }
 
     public int getMaxMicro() {
@@ -107,5 +127,19 @@ public class FeinstaubStation {
 
     public void setDistance(int distance) {
         mDistance = distance;
+    }
+
+    public void calculateMeanValues() {
+        double p1Sum = 0;
+        for (int i = 0; i < mP1Values.size(); i++) {
+            p1Sum = p1Sum + mP1Values.get(i);
+        }
+        mP1Mean = p1Sum / mP1Values.size();
+
+        double p2Sum = 0;
+        for (int i = 0; i < mP1Values.size(); i++) {
+            p2Sum = p2Sum + mP2Values.get(i);
+        }
+        mP2Mean = p2Sum / mP2Values.size();
     }
 }

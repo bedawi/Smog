@@ -75,10 +75,10 @@ public class FeinstaubStations {
                     case "temperature"  : tempStation.setTemperature
                             (tempMeasurementsObject.getDouble("value"));
                         break;
-                    case "P1"           : tempStation.setP1Value
+                    case "P1"           : tempStation.addP1Value
                             (tempMeasurementsObject.getDouble("value"));
                         break;
-                    case "P2"           : tempStation.setP2Value
+                    case "P2"           : tempStation.addP2Value
                             (tempMeasurementsObject.getDouble("value"));
                         break;
                     case "max_micro"    : tempStation.setMaxMicro
@@ -148,6 +148,12 @@ public class FeinstaubStations {
                 + ", "
                 + mStations.get(mStations.size()-1).getDistance()
                 + " KM away");
+    }
+
+    public void calculateMeans() {
+        for (int i = 0; i < mStations.size(); i++) {
+            mStations.get(i).calculateMeanValues();
+        }
     }
 
     public void setCurrentPosition(Position currentPosition) {
