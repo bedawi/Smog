@@ -82,7 +82,7 @@ public class FeinstaubStation {
     }
 
     public double getP1Mean() {
-        return mP1Mean;
+        return Math.round(mP1Mean*100.0)/100.0;
     }
 
     public void setP1Mean(double p1Mean) {
@@ -90,7 +90,7 @@ public class FeinstaubStation {
     }
 
     public double getP2Mean() {
-        return mP2Mean;
+        return Math.round(mP2Mean*100.0)/100.0;
     }
 
     public void setP2Mean(double p2Mean) {

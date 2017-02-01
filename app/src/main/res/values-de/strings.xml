@@ -3,4 +3,6 @@
     <string name="app_name">Smog</string>
     <string name="mixingRatio">Mischungsverhältnis</string>
     <string name="pressure">Druck</string>
+    <string name="particulates">Feinstaub:</string>
+    <string name="pollution">Verschmutzung:</string>
 </resources>

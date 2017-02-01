@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">Smog</string>
+    <string name="exception_caught">Error: exception caught</string>
+    <string name="pressure">Pressure:</string>
+    <string name="mixingRatio">Mixing ratio</string>
+    <string name="pollution">Pollution:</string>
+    <string name="particulates">Particulates:</string>
+</resources>
