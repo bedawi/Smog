@@ -12,6 +12,8 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 import org.json.JSONArray;
@@ -55,6 +57,7 @@ public class MainActivity extends AppCompatActivity {
     @BindView(R.id.humidityView) TextView mHumidityView;
     @BindView(R.id.temperatureValueView) TextView mTemperatureView;
     @BindView(R.id.distanceView) TextView mDistanceView;
+    @BindView(R.id.reloadButton) Button mReloadButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,6 +66,16 @@ public class MainActivity extends AppCompatActivity {
         ButterKnife.bind(this);
 
         getCoarsePosition();
+
+        mReloadButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mReloadButton.setVisibility(View.INVISIBLE);
+                //pullFromServer("http://api.openweathermap.org/pollution/v1/co/" + mCurrentPosition.getLatitude()+ "," + mCurrentPosition.getLongitude()+ "/current.json?appid="+getString(R.string.openweathermap), "CO_from_OpenWeatherMap");
+                pullFromServer("http://api.luftdaten.info/static/v1/data.json", "Feinstaub_from_LuftdatenInfo");
+                mReloadButton.setVisibility(View.VISIBLE);
+            }
+        });
 
         pullFromServer("http://api.openweathermap.org/pollution/v1/co/" + mCurrentPosition.getLatitude()+ "," + mCurrentPosition.getLongitude()+ "/current.json?appid="+getString(R.string.openweathermap), "CO_from_OpenWeatherMap");
         pullFromServer("http://api.luftdaten.info/static/v1/data.json", "Feinstaub_from_LuftdatenInfo");
