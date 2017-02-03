@@ -6,4 +6,6 @@
     <string name="pollution">Pollution:</string>
     <string name="particulates">Particulates:</string>
     <string name="reload">Reload</string>
+    <string name="air_quality">Air Quality</string>
+    <string name="away">away</string>
 </resources>

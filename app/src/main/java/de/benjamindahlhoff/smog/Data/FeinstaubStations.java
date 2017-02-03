@@ -26,7 +26,11 @@ public class FeinstaubStations {
     public FeinstaubStations() {
     }
 
-    public void AddDataToStation(JSONObject stationData) {
+    public void clear() {
+        mStations.clear();
+    }
+
+    public void addDataToStation(JSONObject stationData) {
         try {
             // create a temporary station
             FeinstaubStation tempStation;
@@ -47,7 +51,6 @@ public class FeinstaubStations {
                 // got from the JSON object before:
                 tempStation = new FeinstaubStation();
                 tempStation.setLocationId(stationId);
-                Log.v(TAG, "Creating station with ID: "+stationId);
             }
 
             // Extract the position:
@@ -75,10 +78,10 @@ public class FeinstaubStations {
                     case "temperature"  : tempStation.setTemperature
                             (tempMeasurementsObject.getDouble("value"));
                         break;
-                    case "P1"           : tempStation.addP1Value
+                    case "P1"           : tempStation.addPM10Value
                             (tempMeasurementsObject.getDouble("value"));
                         break;
-                    case "P2"           : tempStation.addP2Value
+                    case "P2"           : tempStation.addPM25Value
                             (tempMeasurementsObject.getDouble("value"));
                         break;
                     case "max_micro"    : tempStation.setMaxMicro
@@ -90,6 +93,12 @@ public class FeinstaubStations {
                     case "samples"      : tempStation.setSamples
                             (tempMeasurementsObject.getInt("value"));
                         break;
+                    /*
+                    default:    Log.v(TAG, "Unknown value: "
+                            + tempMeasurementsObject.getString("value_type")
+                            + ": "
+                            + tempMeasurementsObject.getString("value"));
+                            */
                 }
 
                 //tmpValues[j] = particulatesValues;

@@ -19,6 +19,7 @@ import android.widget.Toast;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
 import java.io.IOException;
 
 import butterknife.BindView;
@@ -48,15 +49,17 @@ public class MainActivity extends AppCompatActivity {
     // Feinstaub
     private FeinstaubStations mFeinstaubStations = new FeinstaubStations();
 
-    // Views for Carbonmonoxide:
-    @BindView(R.id.coValueView) TextView mCoValueView;
-    @BindView(R.id.coPrecisionView) TextView mCoPrecisionView;
-    @BindView(R.id.coPressureView) TextView mCoPressureView;
-    @BindView(R.id.p1ValueView) TextView mP1ValueView;
-    @BindView(R.id.p2ValueView) TextView mP2ValueView;
-    @BindView(R.id.humidityView) TextView mHumidityView;
-    @BindView(R.id.temperatureValueView) TextView mTemperatureView;
-    @BindView(R.id.distanceView) TextView mDistanceView;
+    //@BindView(R.id.coValueView) TextView mCoValueView;
+    //@BindView(R.id.coPrecisionView) TextView mCoPrecisionView;
+    //@BindView(R.id.coPressureView) TextView mCoPressureView;
+    @BindView(R.id.pm25ValueView) TextView mPM25ValueView;
+    @BindView(R.id.pm25DistanceView) TextView mPM25DistanceView;
+    @BindView(R.id.pm10ValueView) TextView mPM10ValueView;
+    @BindView(R.id.pm10DistanceView) TextView mPM10DistanceView;
+    //@BindView(R.id.p2ValueView) TextView mP2ValueView;
+    //@BindView(R.id.humidityView) TextView mHumidityView;
+    //@BindView(R.id.temperatureValueView) TextView mTemperatureView;
+    //@BindView(R.id.distanceView) TextView mDistanceView;
     @BindView(R.id.reloadButton) Button mReloadButton;
 
     @Override
@@ -77,7 +80,16 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        pullFromServer("http://api.openweathermap.org/pollution/v1/co/" + mCurrentPosition.getLatitude()+ "," + mCurrentPosition.getLongitude()+ "/current.json?appid="+getString(R.string.openweathermap), "CO_from_OpenWeatherMap");
+        // Quick and dirty. Fix later.
+        // Necessary because there are not enough stations avaiable and API will not return
+        // anything with precise coordinates given.
+        double lat = mCurrentPosition.getLatitude();
+        int latInt = (int) lat;
+
+        double longi = mCurrentPosition.getLongitude();
+        int longInt = (int) longi;
+
+        pullFromServer("http://api.openweathermap.org/pollution/v1/co/" + latInt + "," + longInt + "/current.json?appid="+getString(R.string.openweathermap), "CO_from_OpenWeatherMap");
         pullFromServer("http://api.luftdaten.info/static/v1/data.json", "Feinstaub_from_LuftdatenInfo");
 
 
@@ -108,6 +120,7 @@ public class MainActivity extends AppCompatActivity {
 
 
     private void pullFromServer(String url, final String service) {
+        Log.v(TAG, "URL: "+ url);
         if (isNetworkAvailable()) {
             OkHttpClient client = new OkHttpClient();
             Request request = new Request.Builder()
@@ -177,9 +190,9 @@ public class MainActivity extends AppCompatActivity {
                 @Override
                 public void run() {
                     //Math.round(mPollution.getCarbonMonoxide().getCarbonMonoxideVolumeMixingRatio() *100.0)/100.0
-                    mCoValueView.setText(getString(R.string.mixingRatio)+": "+ String.valueOf(Math.round(mPollution.getCarbonMonoxide().getCarbonMonoxideVolumeMixingRatio()*1000000000))+ " ppb");
-                    mCoPrecisionView.setText(String.valueOf(mPollution.getCarbonMonoxide().getMeasurementPrecision()));
-                    mCoPressureView.setText(getString(R.string.pressure)+" "+ String.valueOf(mPollution.getCarbonMonoxide().getAtmosphericPressure())+" hPa");
+                    //mCoValueView.setText(getString(R.string.mixingRatio)+": "+ String.valueOf(Math.round(mPollution.getCarbonMonoxide().getCarbonMonoxideVolumeMixingRatio()*1000000000))+ " ppb");
+                    //mCoPrecisionView.setText(String.valueOf(mPollution.getCarbonMonoxide().getMeasurementPrecision()));
+                    //mCoPressureView.setText(getString(R.string.pressure)+" "+ String.valueOf(mPollution.getCarbonMonoxide().getAtmosphericPressure())+" hPa");
                 }
             });
         }
@@ -188,8 +201,9 @@ public class MainActivity extends AppCompatActivity {
             JSONArray ParticulatesData = new JSONArray(data);
 
             // Lets loop through the data and add the stations to the List.
+            mFeinstaubStations.clear();
             for (int i = 0; i<ParticulatesData.length(); i++) {
-                mFeinstaubStations.AddDataToStation(ParticulatesData.getJSONObject(i));
+                mFeinstaubStations.addDataToStation(ParticulatesData.getJSONObject(i));
             }
             mFeinstaubStations.sortByDistance();
             mFeinstaubStations.calculateMeans();
@@ -197,11 +211,15 @@ public class MainActivity extends AppCompatActivity {
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    mP1ValueView.setText("PM10: "+ String.valueOf(mFeinstaubStations.getStationByIndex(0).getP1Mean())+ " µg/m³");
-                    mP2ValueView.setText("PM2,5: "+ String.valueOf(mFeinstaubStations.getStationByIndex(0).getP2Mean())+ " µg/m³");
-                    mTemperatureView.setText("Temp: "+ String.valueOf(mFeinstaubStations.getStationByIndex(0).getTemperature()) +"°C");
-                    mHumidityView.setText("Humidity: "+ String.valueOf(mFeinstaubStations.getStationByIndex(0).getHumidity()));
-                    mDistanceView.setText("Distance: "+String.valueOf(mFeinstaubStations.getStationByIndex(0).getDistance()) +" KM");
+                    //mP1ValueView.setText("PM10: "+ String.valueOf(mFeinstaubStations.getStationByIndex(0).getPM10Mean())+ " µg/m³");
+                    mPM25ValueView.setText(String.valueOf(mFeinstaubStations.getStationByIndex(0).getPM25Mean()));
+                    mPM25DistanceView.setText(String.valueOf(mFeinstaubStations.getStationByIndex(0).getDistance()) + " "+"KM" +" "+ getString(R.string.away));
+
+                    mPM10ValueView.setText(String.valueOf(mFeinstaubStations.getStationByIndex(0).getPM10Mean()));
+                    mPM10DistanceView.setText(String.valueOf(mFeinstaubStations.getStationByIndex(0).getDistance()) + " "+"KM" +" "+ getString(R.string.away));
+
+                    //mTemperatureView.setText("Temp: "+ String.valueOf(mFeinstaubStations.getStationByIndex(0).getTemperature()) +"°C");
+                    //mHumidityView.setText("Humidity: "+ String.valueOf(mFeinstaubStations.getStationByIndex(0).getHumidity()));
 
                 }
             });
