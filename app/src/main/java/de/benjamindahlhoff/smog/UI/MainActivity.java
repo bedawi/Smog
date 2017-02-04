@@ -21,10 +21,12 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.io.StreamCorruptedException;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import de.benjamindahlhoff.smog.Data.CarbonMonoxideData;
+import de.benjamindahlhoff.smog.Data.COStation;
+import de.benjamindahlhoff.smog.Data.COStations;
 import de.benjamindahlhoff.smog.Data.FeinstaubStations;
 import de.benjamindahlhoff.smog.Data.Pollution;
 import de.benjamindahlhoff.smog.Data.Position;
@@ -44,22 +46,20 @@ public class MainActivity extends AppCompatActivity {
     private Position mCurrentPosition = new Position();
 
     // All Pollution-Data goes into the Pollution class
-    private Pollution mPollution = new Pollution();
+    //private Pollution mPollution = new Pollution();
+
+    // CO
+    private COStations mCOStations = new COStations();
 
     // Feinstaub
     private FeinstaubStations mFeinstaubStations = new FeinstaubStations();
 
-    //@BindView(R.id.coValueView) TextView mCoValueView;
-    //@BindView(R.id.coPrecisionView) TextView mCoPrecisionView;
-    //@BindView(R.id.coPressureView) TextView mCoPressureView;
     @BindView(R.id.pm25ValueView) TextView mPM25ValueView;
     @BindView(R.id.pm25DistanceView) TextView mPM25DistanceView;
     @BindView(R.id.pm10ValueView) TextView mPM10ValueView;
     @BindView(R.id.pm10DistanceView) TextView mPM10DistanceView;
-    //@BindView(R.id.p2ValueView) TextView mP2ValueView;
-    //@BindView(R.id.humidityView) TextView mHumidityView;
-    //@BindView(R.id.temperatureValueView) TextView mTemperatureView;
-    //@BindView(R.id.distanceView) TextView mDistanceView;
+    @BindView(R.id.coValueView) TextView mCOValueView;
+    @BindView(R.id.coDistanceView) TextView mCODistanceView;
     @BindView(R.id.reloadButton) Button mReloadButton;
 
     @Override
@@ -114,6 +114,7 @@ public class MainActivity extends AppCompatActivity {
                 mCurrentPosition.setLatitude(lastKnownLocation.getLatitude());
                 mCurrentPosition.setLongitude(lastKnownLocation.getLongitude());
                 mFeinstaubStations.setCurrentPosition(mCurrentPosition);
+                mCOStations.setCurrentPosition(mCurrentPosition);
             }
         }
     }
@@ -178,17 +179,17 @@ public class MainActivity extends AppCompatActivity {
     private void extractDataForService(String service, String data) throws JSONException {
         if (service == "CO_from_OpenWeatherMap") {
             // Getting Carbon Monoxide Data from OpenWeatherMap
-            JSONObject AllCOData = new JSONObject(data);
-            JSONArray CODataArray = AllCOData.getJSONArray("data");
-            JSONObject CODataset = CODataArray.getJSONObject(0);
-            CarbonMonoxideData carbonMonoxideData = new CarbonMonoxideData(CODataset.getDouble("value"), CODataset.getDouble("pressure"), CODataset.getDouble("precision"));
-            Log.v(TAG, "Pressure: " + carbonMonoxideData.getAtmosphericPressure());
-            mPollution.setCarbonMonoxide(carbonMonoxideData);
+            JSONObject COStationData = new JSONObject(data);
+            mCOStations.clear();
+            mCOStations.addStation(COStationData);
+            mCOStations.sortByDistance();
 
             // Time to bring the newly acquired data onto the screen:
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
+                    mCOValueView.setText(String.valueOf(mCOStations.getStationByIndex(0).getCarbonMonoxideMeanValue()));
+                    mCODistanceView.setText(String.valueOf(mCOStations.getStationByIndex(0).getDistance()) + " "+"KM" +" "+ getString(R.string.away));
                     //Math.round(mPollution.getCarbonMonoxide().getCarbonMonoxideVolumeMixingRatio() *100.0)/100.0
                     //mCoValueView.setText(getString(R.string.mixingRatio)+": "+ String.valueOf(Math.round(mPollution.getCarbonMonoxide().getCarbonMonoxideVolumeMixingRatio()*1000000000))+ " ppb");
                     //mCoPrecisionView.setText(String.valueOf(mPollution.getCarbonMonoxide().getMeasurementPrecision()));

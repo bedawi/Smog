@@ -5,17 +5,17 @@ package de.benjamindahlhoff.smog.Data;
  */
 
 public class Pollution {
-    private CarbonMonoxideData mCarbonMonoxide;
+    private COStation mCarbonMonoxide;
     private double mOzoneLayerThickness;
 
     public Pollution() {
     }
 
-    public CarbonMonoxideData getCarbonMonoxide() {
+    public COStation getCarbonMonoxide() {
         return mCarbonMonoxide;
     }
 
-    public void setCarbonMonoxide(CarbonMonoxideData carbonMonoxide) {
+    public void setCarbonMonoxide(COStation carbonMonoxide) {
         mCarbonMonoxide = carbonMonoxide;
     }
 

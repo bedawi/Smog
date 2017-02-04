@@ -20,7 +20,7 @@ import java.util.Comparator;
 
 public class FeinstaubStations {
     public final static String TAG = FeinstaubStations.class.getSimpleName();
-    ArrayList<FeinstaubStation> mStations = new ArrayList<FeinstaubStation>();
+    ArrayList<FeinstaubStation> mStations = new ArrayList<>();
     private Position mCurrentPosition;
 
     public FeinstaubStations() {

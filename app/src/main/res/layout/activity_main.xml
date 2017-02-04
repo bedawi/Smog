@@ -177,6 +177,72 @@
 
 
         </RelativeLayout>
+        <RelativeLayout
+            android:id="@+id/valueCOButton"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:background="@android:color/holo_green_dark"
+            android:clickable="true"
+            android:orientation="vertical"
+            android:gravity="center_vertical"
+            android:layout_margin="4dp">
+
+            <TextView
+                android:id="@+id/valueCOTypeTextView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="3dp"
+                android:text="CO"
+                android:textSize="15sp"
+                android:textAlignment="center"
+                android:textColor="#abffffff"
+                android:layout_marginTop="5dp"
+                />
+            <TextView
+                android:id="@+id/coValueView"
+                android:layout_width="match_parent"
+                android:text="10,00"
+                android:fontFamily="sans-serif"
+                android:textStyle="normal|bold"
+                android:textSize="24sp"
+                android:textAlignment="center"
+                android:textColor="@android:color/white"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
+                />
+
+            <TextView
+                android:id="@+id/coUnitsView"
+                android:layout_width="wrap_content"
+                android:text="ppm"
+                android:fontFamily="sans-serif"
+                android:textSize="8sp"
+                android:textAlignment="textEnd"
+                android:textColor="@android:color/white"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:layout_alignParentRight="true"
+                android:layout_alignParentEnd="true"
+                android:layout_margin="5dp"/>
+
+            <TextView
+                android:id="@+id/coDistanceView"
+                android:layout_width="wrap_content"
+                android:text="10KM away"
+                android:fontFamily="sans-serif"
+                android:textSize="8sp"
+                android:textAlignment="textStart"
+                android:textColor="@android:color/white"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
+                android:layout_margin="5dp"/>
+
+
+        </RelativeLayout>
 
 
     </LinearLayout>

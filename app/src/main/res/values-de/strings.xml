@@ -6,4 +6,7 @@
     <string name="particulates">Feinstaub:</string>
     <string name="pollution">Verschmutzung:</string>
     <string name="reload">Neu laden</string>
+    <string name="air_quality">Luftqualität</string>
+    <string name="away">entfernt</string>
+    <string name="exception_caught">Fehler: exception caught</string>
 </resources>
