@@ -14,6 +14,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 import org.json.JSONArray;
@@ -28,7 +29,6 @@ import butterknife.ButterKnife;
 import de.benjamindahlhoff.smog.Data.COStation;
 import de.benjamindahlhoff.smog.Data.COStations;
 import de.benjamindahlhoff.smog.Data.FeinstaubStations;
-import de.benjamindahlhoff.smog.Data.Pollution;
 import de.benjamindahlhoff.smog.Data.Position;
 import de.benjamindahlhoff.smog.R;
 import okhttp3.Call;
@@ -54,13 +54,20 @@ public class MainActivity extends AppCompatActivity {
     // Feinstaub
     private FeinstaubStations mFeinstaubStations = new FeinstaubStations();
 
+    // Feinstaub Views
     @BindView(R.id.pm25ValueView) TextView mPM25ValueView;
     @BindView(R.id.pm25DistanceView) TextView mPM25DistanceView;
     @BindView(R.id.pm10ValueView) TextView mPM10ValueView;
     @BindView(R.id.pm10DistanceView) TextView mPM10DistanceView;
+    @BindView(R.id.temperatureValueView) TextView mTemperatureValueView;
+    @BindView(R.id.temperatureDistanceView) TextView mTemperatureDistanceView;
+
+    // CO Views
+    @BindView(R.id.valueCOButton) RelativeLayout mCOButtonLayout;
     @BindView(R.id.coValueView) TextView mCOValueView;
     @BindView(R.id.coDistanceView) TextView mCODistanceView;
     @BindView(R.id.reloadButton) Button mReloadButton;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -194,6 +201,9 @@ public class MainActivity extends AppCompatActivity {
                     //mCoValueView.setText(getString(R.string.mixingRatio)+": "+ String.valueOf(Math.round(mPollution.getCarbonMonoxide().getCarbonMonoxideVolumeMixingRatio()*1000000000))+ " ppb");
                     //mCoPrecisionView.setText(String.valueOf(mPollution.getCarbonMonoxide().getMeasurementPrecision()));
                     //mCoPressureView.setText(getString(R.string.pressure)+" "+ String.valueOf(mPollution.getCarbonMonoxide().getAtmosphericPressure())+" hPa");
+
+                    // Close temporarily:
+                    mCOButtonLayout.setVisibility(View.INVISIBLE);
                 }
             });
         }
@@ -218,6 +228,9 @@ public class MainActivity extends AppCompatActivity {
 
                     mPM10ValueView.setText(String.valueOf(mFeinstaubStations.getStationByIndex(0).getPM10Mean()));
                     mPM10DistanceView.setText(String.valueOf(mFeinstaubStations.getStationByIndex(0).getDistance()) + " "+"KM" +" "+ getString(R.string.away));
+
+                    mTemperatureValueView.setText(String.valueOf(mFeinstaubStations.getStationByIndex(0).getTemperature()));
+                    mTemperatureDistanceView.setText(String.valueOf(mFeinstaubStations.getStationByIndex(0).getDistance()) + " "+"KM" +" "+ getString(R.string.away));
 
                     //mTemperatureView.setText("Temp: "+ String.valueOf(mFeinstaubStations.getStationByIndex(0).getTemperature()) +"°C");
                     //mHumidityView.setText("Humidity: "+ String.valueOf(mFeinstaubStations.getStationByIndex(0).getHumidity()));
