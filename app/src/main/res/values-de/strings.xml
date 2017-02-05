@@ -7,6 +7,10 @@
     <string name="pollution">Verschmutzung:</string>
     <string name="reload">Neu laden</string>
     <string name="air_quality">Luftqualität</string>
-    <string name="away">entfernt</string>
     <string name="exception_caught">Fehler: exception caught</string>
+    <string name="stationinfo">Entfernung zur Station:</string>
+    <string name="station_id">Stationsnummer:</string>
+    <string name="show_all_stations">Alle Stationen anzeigen</string>
+    <string name="feinstaub_infotext">Feinstaubwerte von feinstaub.info, einem Projekt des OK Lab Stuttgart</string>
+    <string name="away">entf.</string>
 </resources>

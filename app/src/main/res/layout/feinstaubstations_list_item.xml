@@ -1,39 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/activity_main"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:paddingBottom="@dimen/activity_vertical_margin"
-    android:paddingLeft="@dimen/activity_horizontal_margin"
-    android:paddingRight="@dimen/activity_horizontal_margin"
-    android:paddingTop="@dimen/activity_vertical_margin"
-    tools:context="de.benjamindahlhoff.smog.UI.MainActivity">
-
-    <TextView
-        android:text="@string/air_quality"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/headingTextView"
-        android:layout_centerVertical="true"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentTop="true"
-        android:textAppearance="@style/TextAppearance.AppCompat.Headline"/>
-
-
-    <Button
-        android:text="@string/reload"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:id="@+id/reloadButton"
-        style="@style/Widget.AppCompat.Button.Colored"
-        android:background="@color/colorPrimaryDark"
-        android:textColor="#FFFFFF"/>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
 
     <LinearLayout
         android:id="@+id/FeinstaubStationsLayout"
@@ -96,19 +64,7 @@
                 android:layout_alignParentEnd="true"
                 android:layout_margin="5dp"/>
 
-            <TextView
-                android:id="@+id/pm25DistanceView"
-                android:layout_width="wrap_content"
-                android:text="10KM away"
-                android:fontFamily="sans-serif"
-                android:textSize="8sp"
-                android:textAlignment="textStart"
-                android:textColor="@android:color/white"
-                android:layout_height="wrap_content"
-                android:layout_alignParentBottom="true"
-                android:layout_alignParentLeft="true"
-                android:layout_alignParentStart="true"
-                android:layout_margin="5dp"/>
+
 
 
         </RelativeLayout>
@@ -162,24 +118,12 @@
                 android:layout_alignParentEnd="true"
                 android:layout_margin="5dp"/>
 
-            <TextView
-                android:id="@+id/pm10DistanceView"
-                android:layout_width="wrap_content"
-                android:text="10KM away"
-                android:fontFamily="sans-serif"
-                android:textSize="8sp"
-                android:textAlignment="textStart"
-                android:textColor="@android:color/white"
-                android:layout_height="wrap_content"
-                android:layout_alignParentBottom="true"
-                android:layout_alignParentLeft="true"
-                android:layout_alignParentStart="true"
-                android:layout_margin="5dp"/>
+
 
 
         </RelativeLayout>
         <RelativeLayout
-            android:id="@+id/valueTemperatureButton"
+            android:id="@+id/temperatureBox"
             android:layout_width="80dp"
             android:layout_height="80dp"
             android:background="@android:color/holo_blue_dark"
@@ -187,7 +131,6 @@
             android:orientation="vertical"
             android:gravity="center_vertical"
             android:layout_margin="4dp">
-
             <TextView
                 android:id="@+id/valueTemperatureTypeTextView"
                 android:layout_width="match_parent"
@@ -213,7 +156,6 @@
                 android:layout_alignParentLeft="true"
                 android:layout_alignParentStart="true"
                 />
-
             <TextView
                 android:id="@+id/temperatureUnitsView"
                 android:layout_width="wrap_content"
@@ -227,22 +169,6 @@
                 android:layout_alignParentRight="true"
                 android:layout_alignParentEnd="true"
                 android:layout_margin="5dp"/>
-
-            <TextView
-                android:id="@+id/temperatureDistanceView"
-                android:layout_width="wrap_content"
-                android:text="10KM away"
-                android:fontFamily="sans-serif"
-                android:textSize="8sp"
-                android:textAlignment="textStart"
-                android:textColor="@android:color/white"
-                android:layout_height="wrap_content"
-                android:layout_alignParentBottom="true"
-                android:layout_alignParentLeft="true"
-                android:layout_alignParentStart="true"
-                android:layout_margin="5dp"/>
-
-
         </RelativeLayout>
         <RelativeLayout
             android:id="@+id/humidityBox"
@@ -265,7 +191,7 @@
                 android:layout_marginTop="5dp"
                 />
             <TextView
-                android:id="@+id/humidityValueView"
+                android:id="@+id/HumidityValueView"
                 android:layout_width="match_parent"
                 android:text="10,00"
                 android:fontFamily="sans-serif"
@@ -291,27 +217,12 @@
                 android:layout_alignParentRight="true"
                 android:layout_alignParentEnd="true"
                 android:layout_margin="5dp"/>
-            <TextView
-                android:id="@+id/humidityDistanceView"
-                android:layout_width="wrap_content"
-                android:text="10KM away"
-                android:fontFamily="sans-serif"
-                android:textSize="8sp"
-                android:textAlignment="textStart"
-                android:textColor="@android:color/white"
-                android:layout_height="wrap_content"
-                android:layout_alignParentBottom="true"
-                android:layout_alignParentLeft="true"
-                android:layout_alignParentStart="true"
-                android:layout_margin="5dp"/>
         </RelativeLayout>
-
     </LinearLayout>
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/FeinstaubStationsLayout"
-        android:id="@+id/FeinstaubInfoLayout">
+        android:layout_below="@id/FeinstaubStationsLayout">
 
         <RelativeLayout
             android:layout_width="match_parent"
@@ -321,106 +232,13 @@
                 android:id="@+id/stationInfoText"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/feinstaub_infotext"
-                android:fontFamily="sans-serif"
-                android:textSize="8sp"
-                android:textAlignment="center"
-                android:textColor="@android:color/white"
-                />
-        </RelativeLayout>
-    </LinearLayout>
-
-    <LinearLayout
-        android:orientation="horizontal"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center"
-        android:layout_below="@+id/FeinstaubInfoLayout"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:layout_marginTop="10dp">
-
-        <RelativeLayout
-            android:id="@+id/valueCOButton"
-            android:layout_width="80dp"
-            android:layout_height="80dp"
-            android:background="@android:color/holo_green_dark"
-            android:clickable="true"
-            android:orientation="vertical"
-            android:gravity="center_vertical"
-            android:layout_margin="4dp">
-
-            <TextView
-                android:id="@+id/valueCOTypeTextView"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_margin="3dp"
-                android:text="CO"
-                android:textSize="15sp"
-                android:textAlignment="center"
-                android:textColor="#abffffff"
-                android:layout_marginTop="5dp"
-                />
-            <TextView
-                android:id="@+id/coValueView"
-                android:layout_width="match_parent"
-                android:text="10,00"
-                android:fontFamily="sans-serif"
-                android:textStyle="normal|bold"
-                android:textSize="24sp"
-                android:textAlignment="center"
-                android:textColor="@android:color/white"
-                android:layout_height="wrap_content"
-                android:layout_centerVertical="true"
-                android:layout_alignParentLeft="true"
-                android:layout_alignParentStart="true"
-                />
-
-            <TextView
-                android:id="@+id/coUnitsView"
-                android:layout_width="wrap_content"
-                android:text="ppm"
-                android:fontFamily="sans-serif"
-                android:textSize="8sp"
-                android:textAlignment="textEnd"
-                android:textColor="@android:color/white"
-                android:layout_height="wrap_content"
-                android:layout_alignParentBottom="true"
-                android:layout_alignParentRight="true"
-                android:layout_alignParentEnd="true"
-                android:layout_margin="5dp"/>
-
-            <TextView
-                android:id="@+id/coDistanceView"
-                android:layout_width="wrap_content"
                 android:text="10KM away"
                 android:fontFamily="sans-serif"
                 android:textSize="8sp"
-                android:textAlignment="textStart"
+                android:textAlignment="center"
                 android:textColor="@android:color/white"
-                android:layout_height="wrap_content"
-                android:layout_alignParentBottom="true"
-                android:layout_alignParentLeft="true"
-                android:layout_alignParentStart="true"
-                android:layout_margin="5dp"/>
-
-
+/>
         </RelativeLayout>
-
-
     </LinearLayout>
-
-    <Button
-        android:text="@string/show_all_stations"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/showStationsButton"
-        style="@style/Widget.AppCompat.Button.Colored"
-        android:textColor="#FFFFFF"
-        android:layout_marginBottom="24dp"
-        android:layout_above="@+id/reloadButton"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:background="@android:color/holo_blue_light"/>
 
 </RelativeLayout>

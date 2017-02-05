@@ -8,4 +8,8 @@
     <string name="reload">Reload</string>
     <string name="air_quality">Air Quality</string>
     <string name="away">away</string>
+    <string name="stationinfo">Distance to station:</string>
+    <string name="station_id">Station ID:</string>
+    <string name="show_all_stations">Show all stations</string>
+    <string name="feinstaub_infotext">Particulates data from feinstaub.info, a Project of the OK Lab Stuttgart, Germany</string>
 </resources>

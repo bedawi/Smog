@@ -1,6 +1,13 @@
 package de.benjamindahlhoff.smog.Data;
 
+import android.graphics.Color;
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import java.util.ArrayList;
+import java.util.List;
+
+import static android.R.attr.value;
 
 /**
  * Created by Benjamin Dahlhoff on 31.01.17.
@@ -10,20 +17,23 @@ import java.util.ArrayList;
  * The name of the class comes from the German word for Particulates in the air "Feinstaub".
  */
 
-public class FeinstaubStation {
+public class FeinstaubStation implements Parcelable {
     private int mLocationId;
     private String mTimestamp;
     private double mHumidity;
     private double mTemperature;
     private Position mPosition;
-    private ArrayList<Double> mPM10Values = new ArrayList<>();
-    private ArrayList<Double> mPM25Values = new ArrayList<>();
+    private final List<Double> mPM10Values = new ArrayList<>();
+    private final List<Double> mPM25Values = new ArrayList<>();
     private double mP1Mean;
     private double mP2Mean;
     private int mMaxMicro;
     private int mMinMicro;
     private int mSamples;
     private int mDistance;
+
+    public FeinstaubStation() {
+    }
 
     public int getLocationId() {
         return mLocationId;
@@ -65,7 +75,7 @@ public class FeinstaubStation {
         mPosition = position;
     }
 
-    public ArrayList<Double> getPM10Values() {
+    public List<Double> getPM10Values() {
         return mPM10Values;
     }
 
@@ -73,7 +83,7 @@ public class FeinstaubStation {
         mPM10Values.add(p1Value);
     }
 
-    public ArrayList<Double> getPM25Values() {
+    public List<Double> getPM25Values() {
         return mPM25Values;
     }
 
@@ -135,6 +145,8 @@ public class FeinstaubStation {
             p1Sum = p1Sum + mPM10Values.get(i);
         }
         mP1Mean = p1Sum / mPM10Values.size();
+        // In the Future we do:
+        // mP1Mean = mPM10Values.stream().mapToDouble(d -> d.doubleValue()).average();
 
         double p2Sum = 0;
         for (int i = 0; i < mPM10Values.size(); i++) {
@@ -142,4 +154,75 @@ public class FeinstaubStation {
         }
         mP2Mean = p2Sum / mPM25Values.size();
     }
+
+    public int getColorforValue(double value) {
+        String[] colors = {
+                "#00796B",
+                "#F9A825",
+                "#E65100",
+                "#DD2C00",
+                "#960084",
+                "#001996"
+        };
+        if (value <= 25) { return Color.parseColor(colors[0]); }
+        if (value <= 50) { return Color.parseColor(colors[1]); }
+        if (value <= 75) { return Color.parseColor(colors[2]); }
+        if (value <= 100) { return Color.parseColor(colors[3]); }
+        if (value <= 200) { return Color.parseColor(colors[4]); }
+        if (value > 200) { return Color.parseColor(colors[5]); }
+        return Color.parseColor(colors[5]);
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeInt(mLocationId);
+        dest.writeString(mTimestamp);
+        dest.writeDouble(mHumidity);
+        dest.writeDouble(mTemperature);
+        dest.writeDouble(mPosition.getLatitude());
+        dest.writeDouble(mPosition.getLongitude());
+        dest.writeList(mPM10Values);
+        dest.writeList(mPM25Values);
+        dest.writeDouble(mP1Mean);
+        dest.writeDouble(mP2Mean);
+        dest.writeInt(mMaxMicro);
+        dest.writeInt(mMinMicro);
+        dest.writeInt(mSamples);
+        dest.writeInt(mDistance);
+    }
+
+    private FeinstaubStation(Parcel in) {
+        mLocationId = in.readInt();
+        mTimestamp = in.readString();
+        mHumidity = in.readDouble();
+        mTemperature = in.readDouble();
+        mPosition = new Position();
+        mPosition.setLatitude(in.readDouble());
+        mPosition.setLongitude(in.readDouble());
+        in.readList(mPM10Values, Double.class.getClassLoader());
+        in.readList(mPM25Values, Double.class.getClassLoader());
+        mP1Mean = in.readDouble();
+        mP2Mean = in.readDouble();
+        mMaxMicro = in.readInt();
+        mMaxMicro = in.readInt();
+        mSamples = in.readInt();
+        mDistance = in.readInt();
+    }
+
+    public static final Creator<FeinstaubStation> CREATOR = new Creator<FeinstaubStation>() {
+        @Override
+        public FeinstaubStation createFromParcel(Parcel in) {
+            return new FeinstaubStation(in);
+        }
+
+        @Override
+        public FeinstaubStation[] newArray(int size) {
+            return new FeinstaubStation[size];
+        }
+    };
 }

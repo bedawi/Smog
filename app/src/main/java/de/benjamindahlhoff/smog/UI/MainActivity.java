@@ -2,11 +2,13 @@ package de.benjamindahlhoff.smog.UI;
 
 import android.Manifest;
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.os.Parcelable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
@@ -20,14 +22,19 @@ import android.widget.Toast;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.w3c.dom.Text;
 
 import java.io.IOException;
 import java.io.StreamCorruptedException;
+import java.util.ArrayList;
+import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 import de.benjamindahlhoff.smog.Data.COStation;
 import de.benjamindahlhoff.smog.Data.COStations;
+import de.benjamindahlhoff.smog.Data.FeinstaubStation;
 import de.benjamindahlhoff.smog.Data.FeinstaubStations;
 import de.benjamindahlhoff.smog.Data.Position;
 import de.benjamindahlhoff.smog.R;
@@ -41,6 +48,7 @@ import okhttp3.Response;
 public class MainActivity extends AppCompatActivity {
     public final static String TAG = MainActivity.class.getSimpleName();
     private static final int PERMISSION_ACCESS_COARSE_LOCATION = 1;
+    public static final String FEINSTAUB_STATIONS = "FEINSTAUB_STATIONS";
 
     // Our current position is stored in
     private Position mCurrentPosition = new Position();
@@ -57,16 +65,23 @@ public class MainActivity extends AppCompatActivity {
     // Feinstaub Views
     @BindView(R.id.pm25ValueView) TextView mPM25ValueView;
     @BindView(R.id.pm25DistanceView) TextView mPM25DistanceView;
+    @BindView(R.id.pm25Box) RelativeLayout mPM25Box;
     @BindView(R.id.pm10ValueView) TextView mPM10ValueView;
     @BindView(R.id.pm10DistanceView) TextView mPM10DistanceView;
+    @BindView(R.id.pm10Box) RelativeLayout mPM10Box;
     @BindView(R.id.temperatureValueView) TextView mTemperatureValueView;
     @BindView(R.id.temperatureDistanceView) TextView mTemperatureDistanceView;
+    @BindView(R.id.humidityDistanceView) TextView mHumidityDistanceView;
+    @BindView(R.id.humidityValueView) TextView mHumidityValueView;
 
     // CO Views
     @BindView(R.id.valueCOButton) RelativeLayout mCOButtonLayout;
     @BindView(R.id.coValueView) TextView mCOValueView;
     @BindView(R.id.coDistanceView) TextView mCODistanceView;
+
+    // Buttons
     @BindView(R.id.reloadButton) Button mReloadButton;
+    @BindView(R.id.showStationsButton) Button mStationsButton;
 
 
     @Override
@@ -86,6 +101,10 @@ public class MainActivity extends AppCompatActivity {
                 mReloadButton.setVisibility(View.VISIBLE);
             }
         });
+
+
+
+
 
         // Quick and dirty. Fix later.
         // Necessary because there are not enough stations avaiable and API will not return
@@ -125,7 +144,6 @@ public class MainActivity extends AppCompatActivity {
             }
         }
     }
-
 
     private void pullFromServer(String url, final String service) {
         Log.v(TAG, "URL: "+ url);
@@ -225,12 +243,15 @@ public class MainActivity extends AppCompatActivity {
                     //mP1ValueView.setText("PM10: "+ String.valueOf(mFeinstaubStations.getStationByIndex(0).getPM10Mean())+ " µg/m³");
                     mPM25ValueView.setText(String.valueOf(mFeinstaubStations.getStationByIndex(0).getPM25Mean()));
                     mPM25DistanceView.setText(String.valueOf(mFeinstaubStations.getStationByIndex(0).getDistance()) + " "+"KM" +" "+ getString(R.string.away));
-
+                    mPM25Box.setBackgroundColor(mFeinstaubStations.getStationByIndex(0).getColorforValue(mFeinstaubStations.getStationByIndex(0).getPM25Mean()));
                     mPM10ValueView.setText(String.valueOf(mFeinstaubStations.getStationByIndex(0).getPM10Mean()));
                     mPM10DistanceView.setText(String.valueOf(mFeinstaubStations.getStationByIndex(0).getDistance()) + " "+"KM" +" "+ getString(R.string.away));
-
+                    mPM10Box.setBackgroundColor(mFeinstaubStations.getStationByIndex(0).getColorforValue(mFeinstaubStations.getStationByIndex(0).getPM10Mean()));
                     mTemperatureValueView.setText(String.valueOf(mFeinstaubStations.getStationByIndex(0).getTemperature()));
                     mTemperatureDistanceView.setText(String.valueOf(mFeinstaubStations.getStationByIndex(0).getDistance()) + " "+"KM" +" "+ getString(R.string.away));
+                    mHumidityValueView.setText(String.valueOf(mFeinstaubStations.getStationByIndex(0).getHumidity()));
+                    mHumidityDistanceView.setText(String.valueOf(mFeinstaubStations.getStationByIndex(0).getDistance()) + " "+"KM" +" "+ getString(R.string.away));
+
 
                     //mTemperatureView.setText("Temp: "+ String.valueOf(mFeinstaubStations.getStationByIndex(0).getTemperature()) +"°C");
                     //mHumidityView.setText("Humidity: "+ String.valueOf(mFeinstaubStations.getStationByIndex(0).getHumidity()));
@@ -239,6 +260,15 @@ public class MainActivity extends AppCompatActivity {
             });
         } // *** END if (service == "Feinstaub_from_LuftdatenInfo")
 
+    }
+
+    @OnClick(R.id.showStationsButton)
+    public void startFeinstaubStationsActivity (View view) {
+        Intent intent = new Intent(this, FeinstaubStationsActivity.class);
+        ArrayList<FeinstaubStation> parcel = mFeinstaubStations.getStations();
+
+        intent.putParcelableArrayListExtra(FEINSTAUB_STATIONS, parcel);
+        startActivity(intent);
 
     }
 }

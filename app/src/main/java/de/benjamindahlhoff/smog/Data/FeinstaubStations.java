@@ -1,5 +1,7 @@
 package de.benjamindahlhoff.smog.Data;
 
+import android.os.Parcel;
+import android.os.Parcelable;
 import android.util.Log;
 
 import org.json.JSONArray;
@@ -9,6 +11,7 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.List;
 
 /**
  * Created by Benjamin Dahlhoff on 31.01.17.
@@ -16,6 +19,7 @@ import java.util.Comparator;
  * This class holds all the stations' data in one ArrayList.
  * It also provides methods to add data and to sort itself by the distance of the stations to
  * the user's position.
+ *
  */
 
 public class FeinstaubStations {
@@ -26,10 +30,17 @@ public class FeinstaubStations {
     public FeinstaubStations() {
     }
 
+    public FeinstaubStations(ArrayList<FeinstaubStation> stations) {
+        mStations = stations;
+    }
+
     public void clear() {
         mStations.clear();
     }
 
+    /**
+     * @param stationData JSON Object where the data is extracted from
+     */
     public void addDataToStation(JSONObject stationData) {
         try {
             // create a temporary station
@@ -100,8 +111,6 @@ public class FeinstaubStations {
                             + tempMeasurementsObject.getString("value"));
                             */
                 }
-
-                //tmpValues[j] = particulatesValues;
             }
 
             // Alright, finally, lets insert the ne
@@ -115,7 +124,6 @@ public class FeinstaubStations {
 
         } catch (JSONException e) {
             Log.e(TAG, "Error! Skipping this entry. Error:" +e);
-            //e.printStackTrace();
         }
 
     }
@@ -134,17 +142,11 @@ public class FeinstaubStations {
 
     public void sortByDistance() {
         // Sorting Data, nearest first.
+
         Collections.sort(mStations, new Comparator<FeinstaubStation>() {
             @Override
             public int compare(FeinstaubStation o1, FeinstaubStation o2) {
-                //int returnValue = 0;
-                if (Integer.valueOf(o1.getDistance()) > Integer.valueOf(o2.getDistance())) {
-                    return 1;
-                }
-                if (Integer.valueOf(o1.getDistance()) < Integer.valueOf(o2.getDistance())) {
-                    return -1;
-                }
-                return 0;
+                return o1.getDistance() - o2.getDistance();
             }
         });
         Log.v(TAG, "Done Sorting! Next station is "
@@ -177,4 +179,5 @@ public class FeinstaubStations {
         }
         return -1;
     }
+
 }
