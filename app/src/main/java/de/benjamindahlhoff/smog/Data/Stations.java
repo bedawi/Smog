@@ -1,7 +1,5 @@
 package de.benjamindahlhoff.smog.Data;
 
-import android.os.Parcel;
-import android.os.Parcelable;
 import android.util.Log;
 
 import org.json.JSONArray;
@@ -11,7 +9,6 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.List;
 
 /**
  * Created by Benjamin Dahlhoff on 31.01.17.
@@ -22,15 +19,20 @@ import java.util.List;
  *
  */
 
-public class FeinstaubStations {
-    public final static String TAG = FeinstaubStations.class.getSimpleName();
-    ArrayList<FeinstaubStation> mStations = new ArrayList<>();
+public class Stations {
+    public final static String TAG = Stations.class.getSimpleName();
+    ArrayList<Station> mStations = new ArrayList<>();
     private Position mCurrentPosition;
 
-    public FeinstaubStations() {
+    public Stations() {
     }
 
-    public FeinstaubStations(ArrayList<FeinstaubStation> stations) {
+    public Stations(ArrayList<Station> stations) {
+        mStations = stations;
+    }
+
+    public void setStations(ArrayList<Station> stations) {
+        this.clear();
         mStations = stations;
     }
 
@@ -38,13 +40,25 @@ public class FeinstaubStations {
         mStations.clear();
     }
 
+    public void addData_fromWAQI(JSONObject stationData) {
+        try {
+            Station tempStation;
+            JSONObject DataObject = stationData.getJSONObject("data");
+
+        } catch (JSONException e) {
+            Log.e(TAG, "Error! Skipping this entry. Error:" +e);
+        }
+
+
+    }
+
     /**
      * @param stationData JSON Object where the data is extracted from
      */
-    public void addDataToStation(JSONObject stationData) {
+    public void addData_fromLuftdatenInfo(JSONObject stationData) {
         try {
             // create a temporary station
-            FeinstaubStation tempStation;
+            Station tempStation;
 
             // First lets get the station's id and Position from the JSON object
             JSONObject LocationObject = stationData.getJSONObject("location");
@@ -60,7 +74,7 @@ public class FeinstaubStations {
             } else {
                 // There is no station with this ID, lets give our temporary station the id we
                 // got from the JSON object before:
-                tempStation = new FeinstaubStation();
+                tempStation = new Station();
                 tempStation.setLocationId(stationId);
             }
 
@@ -83,10 +97,10 @@ public class FeinstaubStations {
                 String valueType = tempMeasurementsObject.getString("value_type");
 
                 switch (valueType) {
-                    case "humidity"     : tempStation.setHumidity
+                    case "humidity"     : tempStation.addHumidity
                             (tempMeasurementsObject.getDouble("value"));
                         break;
-                    case "temperature"  : tempStation.setTemperature
+                    case "temperature"  : tempStation.addTemperature
                             (tempMeasurementsObject.getDouble("value"));
                         break;
                     case "P1"           : tempStation.addPM10Value
@@ -94,15 +108,6 @@ public class FeinstaubStations {
                         break;
                     case "P2"           : tempStation.addPM25Value
                             (tempMeasurementsObject.getDouble("value"));
-                        break;
-                    case "max_micro"    : tempStation.setMaxMicro
-                            (tempMeasurementsObject.getInt("value"));
-                        break;
-                    case "min_micro"    : tempStation.setMinMicro
-                            (tempMeasurementsObject.getInt("value"));
-                        break;
-                    case "samples"      : tempStation.setSamples
-                            (tempMeasurementsObject.getInt("value"));
                         break;
                     /*
                     default:    Log.v(TAG, "Unknown value: "
@@ -132,20 +137,20 @@ public class FeinstaubStations {
         return mCurrentPosition;
     }
 
-    public ArrayList<FeinstaubStation> getStations() {
+    public ArrayList<Station> getStations() {
         return mStations;
     }
 
-    public FeinstaubStation getStationByIndex(int index) {
+    public Station getStationByIndex(int index) {
         return mStations.get(index);
     }
 
     public void sortByDistance() {
         // Sorting Data, nearest first.
 
-        Collections.sort(mStations, new Comparator<FeinstaubStation>() {
+        Collections.sort(mStations, new Comparator<Station>() {
             @Override
-            public int compare(FeinstaubStation o1, FeinstaubStation o2) {
+            public int compare(Station o1, Station o2) {
                 return o1.getDistance() - o2.getDistance();
             }
         });

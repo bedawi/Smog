@@ -3,12 +3,12 @@
                 android:orientation="vertical"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:id="@+id/feinstaubStations">
+                android:id="@+id/stationsLayout">
 
     <android.support.v7.widget.RecyclerView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:id="@+id/recyclerView">
+        android:id="@+id/stationsListRecylerView">
     </android.support.v7.widget.RecyclerView>
 
 </RelativeLayout>

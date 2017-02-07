@@ -12,4 +12,5 @@
     <string name="station_id">Station ID:</string>
     <string name="show_all_stations">Show all stations</string>
     <string name="feinstaub_infotext">Particulates data from feinstaub.info, a Project of the OK Lab Stuttgart, Germany</string>
+    <string name="humidity">HUMIDITY</string>
 </resources>

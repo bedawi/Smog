@@ -5,8 +5,8 @@ public class Position {
     private double mLongitude;
 
     public Position() {
-        mLatitude = 50;
-        mLatitude = 8;
+        mLatitude = 0;
+        mLatitude = 0;
     }
 
     public Position(double latitude, double longitude) {

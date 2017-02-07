@@ -13,4 +13,5 @@
     <string name="show_all_stations">Alle Stationen anzeigen</string>
     <string name="feinstaub_infotext">Feinstaubwerte von feinstaub.info, einem Projekt des OK Lab Stuttgart</string>
     <string name="away">entf.</string>
+    <string name="humidity">Feuchtigkeit</string>
 </resources>
