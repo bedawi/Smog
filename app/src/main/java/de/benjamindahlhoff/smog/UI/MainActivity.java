@@ -27,6 +27,7 @@ import java.util.ArrayList;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import de.benjamindahlhoff.smog.Data.Interpreter_Luftdaten;
 import de.benjamindahlhoff.smog.Data.Station;
 import de.benjamindahlhoff.smog.Data.Stations;
 import de.benjamindahlhoff.smog.Data.Position;
@@ -52,7 +53,7 @@ public class MainActivity extends AppCompatActivity {
     private Stations mStations = new Stations();
 
     // Feinstaub Views
-    @BindView(R.id.pm25ValueView) TextView mPM25ValueView;
+    /*@BindView(R.id.pm25ValueView) TextView mPM25ValueView;
     @BindView(R.id.pm25DistanceView) TextView mPM25DistanceView;
     @BindView(R.id.pm25Box) RelativeLayout mPM25Box;
     @BindView(R.id.pm10ValueView) TextView mPM10ValueView;
@@ -66,7 +67,7 @@ public class MainActivity extends AppCompatActivity {
     // CO Views
     @BindView(R.id.valueCOButton) RelativeLayout mCOButtonLayout;
     @BindView(R.id.coValueView) TextView mCOValueView;
-    @BindView(R.id.coDistanceView) TextView mCODistanceView;
+    @BindView(R.id.coDistanceView) TextView mCODistanceView; */
 
     // Buttons
     @BindView(R.id.reloadButton) Button mReloadButton;
@@ -94,7 +95,10 @@ public class MainActivity extends AppCompatActivity {
             int longInt = (int) longi;
 
             //pullFromServer("http://api.openweathermap.org/pollution/v1/co/" + latInt + "," + longInt + "/current.json?appid="+getString(R.string.openweathermap), "CO_from_OpenWeatherMap");
-            pullFromServer("http://api.luftdaten.info/static/v1/data.json", "Feinstaub_from_LuftdatenInfo");
+            //pullFromServer("http://api.luftdaten.info/static/v1/data.json", "Feinstaub_from_LuftdatenInfo");
+            pullFromServer("http://benjamindahlhoff.de/downloads/data.json", "Feinstaub_from_LuftdatenInfo");
+
+
             pullFromServer("https://api.waqi.info/feed/here/?token="+getString(R.string.aqi_open_data), "WAQI");
         }
 
@@ -129,7 +133,7 @@ public class MainActivity extends AppCompatActivity {
         ArrayList<Station> stations = new ArrayList<>();
         stations = (savedInstanceState.getParcelableArrayList(KEY_STATIONS));
         mStations.setStations(stations);
-        refreshActivity();
+        //refreshActivity();
     }
 
     private void getCoarsePosition() {
@@ -218,13 +222,12 @@ public class MainActivity extends AppCompatActivity {
         }
         if (service == "Feinstaub_from_LuftdatenInfo") {
             // Data comes as huge Array:
-            JSONArray ParticulatesData = new JSONArray(data);
+            JSONArray luftDaten = new JSONArray(data);
 
             // Lets loop through the data and add the stations to the List.
             mStations.clear();
-            for (int i = 0; i<ParticulatesData.length(); i++) {
-                mStations.addData_fromLuftdatenInfo(ParticulatesData.getJSONObject(i));
-            }
+            Interpreter_Luftdaten luftdaten = new Interpreter_Luftdaten();
+            mStations.injectStations(luftdaten.converter(luftDaten, mCurrentPosition));
             mStations.sortByDistance();
             mStations.calculateMeans();
 
@@ -237,13 +240,14 @@ public class MainActivity extends AppCompatActivity {
         } // *** END if (service == "Feinstaub_from_LuftdatenInfo")
 
         if (service == "WAQI") {
+            /*
             JSONArray WAQIData = new JSONArray(data);
             for (int i = 0; i<WAQIData.length(); i++) {
                 mStations.addData_fromWAQI(WAQIData.getJSONObject(i));
             }
             mStations.sortByDistance();
             mStations.calculateMeans();
-
+*/
         }
 
     }

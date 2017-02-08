@@ -47,9 +47,11 @@ public class StationsAdapter extends RecyclerView.Adapter<StationsAdapter.Statio
             mStationInfoView.setText(String.format(mContext.getString(R.string.stationinfo)
                             + " %s Km, "
                             + mContext.getString(R.string.station_id)
-                            + " %s",
+                            + " %s (%s/%s)",
                     station.getDistance(),
-                    station.getLocationId()));
+                    station.getLocationId(),
+                    station.getValueFor("PM10"),
+                    station.getValueFor("PM25")));
         }
 
         @Override
@@ -76,6 +78,7 @@ public class StationsAdapter extends RecyclerView.Adapter<StationsAdapter.Statio
         holder.bindStation(mStations.get(position));
         holder.mMeasurementsAdapter.setMeasurements(mStations.get(position).getMeasurements());
 // second adapter here?
+
     }
 
     @Override

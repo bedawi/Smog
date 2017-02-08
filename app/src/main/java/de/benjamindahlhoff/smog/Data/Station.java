@@ -68,29 +68,37 @@ public class Station implements Parcelable {
     public void calculateMeanValues() {
 
         // PM10
-        double means_pm10 = means(mPM10Values);
-        Measurement mPM10 = new Measurement("PM10", means_pm10, "µg/m3",
-                getAirQualityColor(means_pm10));
-        mMeasurements.add(mPM10);
+        if (mPM10Values.size() > 0) {
+            double means_pm10 = means(mPM10Values);
+            Measurement mPM10 = new Measurement("PM10", means_pm10, "µg/m3",
+                    getAirQualityColor(means_pm10));
+            mMeasurements.add(mPM10);
+        }
 
         // PM2.5
-        double means_pm25 = means(mPM25Values);
-        Measurement mPM25 = new Measurement("PM25", means_pm25, "µg/m3",
-                getAirQualityColor(means_pm25));
-        mMeasurements.add(mPM25);
+        if (mPM25Values.size() > 0) {
+            double means_pm25 = means(mPM25Values);
+            Measurement mPM25 = new Measurement("PM25", means_pm25, "µg/m3",
+                    getAirQualityColor(means_pm25));
+            mMeasurements.add(mPM25);
+        }
 
         // Temperature:
-        double means_temperature = means(mTemperature);
-        Measurement mTemp = new Measurement("TEMP", means_temperature, "°C",
-                Color.parseColor("#00796B"));
-        mMeasurements.add(mTemp);
+        if (mTemperature.size() > 0) {
+            double means_temperature = means(mTemperature);
+            Measurement mTemp = new Measurement("TEMP", means_temperature, "°C",
+                    Color.parseColor("#00796B"));
+            mMeasurements.add(mTemp);
+        }
 
 
         // Temperature:
-        double means_humidity = means(mHumidity);
-        Measurement mHUM = new Measurement("HUMIDITY", means_humidity, "%",
-                Color.parseColor("#00796B"));
-        mMeasurements.add(mHUM);
+        if (mHumidity.size() > 0) {
+            double means_humidity = means(mHumidity);
+            Measurement mHUM = new Measurement("HUMIDITY", means_humidity, "%",
+                    Color.parseColor("#00796B"));
+            mMeasurements.add(mHUM);
+        }
     }
 
     public int getAirQualityColor(double value) {
@@ -105,7 +113,7 @@ public class Station implements Parcelable {
 
     public int getValueFor (String name) {
         for (int i=0; i< mMeasurements.size(); i++) {
-            if (mMeasurements.get(i).getName() == name) {
+            if (mMeasurements.get(i).getName().equals(name)) {
                 return mMeasurements.get(i).getValue();
             }
         }

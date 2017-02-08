@@ -8,6 +8,7 @@ import android.view.ViewGroup;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.ButterKnife;
@@ -19,13 +20,11 @@ import de.benjamindahlhoff.smog.R;
  */
 
 public class MeasurementsAdapter extends RecyclerView.Adapter<MeasurementsAdapter.MeasurementsViewHolder> {
-    List<Measurement> mMeasurements;
+    private final List<Measurement> mMeasurements = new ArrayList<>();
 
     public void setMeasurements(List<Measurement> measurements) {
-        mMeasurements = measurements;
-    }
-
-    public MeasurementsAdapter() {
+        mMeasurements.clear();
+        mMeasurements.addAll(measurements);
     }
 
     @Override
@@ -59,7 +58,7 @@ public class MeasurementsAdapter extends RecyclerView.Adapter<MeasurementsAdapte
             mValueView = (TextView) itemView.findViewById(R.id.measurementValueView);
             mUnitsView = (TextView) itemView.findViewById(R.id.measurementUnitsView);
             mBoxLayout = (RelativeLayout) itemView.findViewById(R.id.measurementBox);
-            itemView.setOnClickListener(this);
+            //itemView.setOnClickListener(this);
         }
 
         public void bindMeasurement (Measurement measurement) {
@@ -67,7 +66,6 @@ public class MeasurementsAdapter extends RecyclerView.Adapter<MeasurementsAdapte
             mValueView.setText(String.valueOf(measurement.getValue()));
             mUnitsView.setText(measurement.getUnits());
             mBoxLayout.setBackgroundColor(measurement.getColorInterpretation());
-            // TO DO SET COLOR HERE!
         }
 
         @Override

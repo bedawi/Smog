@@ -21,7 +21,6 @@
             android:layout_height="match_parent"
             android:id="@+id/measurementsListRecyclerView"
             android:layout_gravity="center_horizontal|center"
-            tools:listitem="@layout/station_item"
             android:layout_marginLeft="10dp"
             android:layout_marginRight="10dp"
             >
