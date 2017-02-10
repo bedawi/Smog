@@ -3,6 +3,7 @@ package de.benjamindahlhoff.smog.Adapters;
 import android.content.Context;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,10 +11,14 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import de.benjamindahlhoff.smog.Data.Station;
+import de.benjamindahlhoff.smog.Data.Stations;
 import de.benjamindahlhoff.smog.R;
+import de.benjamindahlhoff.smog.UI.MainActivity;
 
 /**
  * Created by Benjamin Dahlhoff on 04.02.17.
@@ -21,7 +26,8 @@ import de.benjamindahlhoff.smog.R;
 
 public class StationsAdapter extends RecyclerView.Adapter<StationsAdapter.StationsViewHolder> {
 
-    List<Station> mStations = new ArrayList<>();
+    public final static String TAG = StationsAdapter.class.getSimpleName();
+    private static List<Station> mStations = new ArrayList<>();
     private Context mContext;
     private static RecyclerView measurementsList;
 
@@ -47,11 +53,15 @@ public class StationsAdapter extends RecyclerView.Adapter<StationsAdapter.Statio
             mStationInfoView.setText(String.format(mContext.getString(R.string.stationinfo)
                             + " %s Km, "
                             + mContext.getString(R.string.station_id)
-                            + " %s (%s/%s)",
+                            + " %s",
                     station.getDistance(),
-                    station.getLocationId(),
-                    station.getValueFor("PM10"),
-                    station.getValueFor("PM25")));
+                    station.getLocationId()));
+            /**
+             * Never forget this line: It took me three days to find out what was wrong with
+             * my program. If adapter.notifyDataSetChanged is not called, the list will show
+             * wrong measurements when scrolling up in the primary RecyclerView.
+             */
+            mMeasurementsAdapter.notifyDataSetChanged();
         }
 
         @Override
@@ -61,7 +71,7 @@ public class StationsAdapter extends RecyclerView.Adapter<StationsAdapter.Statio
     }
 
     public StationsAdapter(Context context, ArrayList<Station> stations) {
-        mStations = stations;
+        mStations.addAll(stations);
         mContext = context;
     }
 
@@ -76,8 +86,20 @@ public class StationsAdapter extends RecyclerView.Adapter<StationsAdapter.Statio
     @Override
     public void onBindViewHolder(StationsViewHolder holder, int position) {
         holder.bindStation(mStations.get(position));
-        holder.mMeasurementsAdapter.setMeasurements(mStations.get(position).getMeasurements());
-// second adapter here?
+        String[] name = new String[mStations.get(position).getMeasurements().size()];
+        double[] value = new double[mStations.get(position).getMeasurements().size()];
+        String[] units = new String[mStations.get(position).getMeasurements().size()];
+        int[] color = new int[mStations.get(position).getMeasurements().size()];
+
+        for (int i=0; i<mStations.get(position).getMeasurements().size(); i++) {
+            name[i] = mStations.get(position).getMeasurements().get(i).getName();
+            value[i] = mStations.get(position).getMeasurements().get(i).getValue();
+            units[i] = mStations.get(position).getMeasurements().get(i).getUnits();
+            color[i] = mStations.get(position).getMeasurements().get(i).getColorInterpretation();
+        }
+        // holder.mMeasurementsAdapter.setMeasurements(mStations.get(position).getMeasurements());
+        holder.mMeasurementsAdapter.setMeasurements(name, value, units, color);
+        //Log.v(TAG, "Station:"+ mStations.get(position).getLocationId() +" PM10:"+mStations.get(position).getMeasurements().get(0).getValue());
 
     }
 

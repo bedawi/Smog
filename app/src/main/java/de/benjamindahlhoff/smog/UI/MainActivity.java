@@ -52,22 +52,6 @@ public class MainActivity extends AppCompatActivity {
     // Feinstaub
     private Stations mStations = new Stations();
 
-    // Feinstaub Views
-    /*@BindView(R.id.pm25ValueView) TextView mPM25ValueView;
-    @BindView(R.id.pm25DistanceView) TextView mPM25DistanceView;
-    @BindView(R.id.pm25Box) RelativeLayout mPM25Box;
-    @BindView(R.id.pm10ValueView) TextView mPM10ValueView;
-    @BindView(R.id.pm10DistanceView) TextView mPM10DistanceView;
-    @BindView(R.id.pm10Box) RelativeLayout mPM10Box;
-    @BindView(R.id.temperatureValueView) TextView mTemperatureValueView;
-    @BindView(R.id.temperatureDistanceView) TextView mTemperatureDistanceView;
-    @BindView(R.id.humidityDistanceView) TextView mHumidityDistanceView;
-    @BindView(R.id.humidityValueView) TextView mHumidityValueView;
-
-    // CO Views
-    @BindView(R.id.valueCOButton) RelativeLayout mCOButtonLayout;
-    @BindView(R.id.coValueView) TextView mCOValueView;
-    @BindView(R.id.coDistanceView) TextView mCODistanceView; */
 
     // Buttons
     @BindView(R.id.reloadButton) Button mReloadButton;
@@ -95,10 +79,7 @@ public class MainActivity extends AppCompatActivity {
             int longInt = (int) longi;
 
             //pullFromServer("http://api.openweathermap.org/pollution/v1/co/" + latInt + "," + longInt + "/current.json?appid="+getString(R.string.openweathermap), "CO_from_OpenWeatherMap");
-            //pullFromServer("http://api.luftdaten.info/static/v1/data.json", "Feinstaub_from_LuftdatenInfo");
-            pullFromServer("http://benjamindahlhoff.de/downloads/data.json", "Feinstaub_from_LuftdatenInfo");
-
-
+            pullFromServer("http://api.luftdaten.info/static/v1/data.json", "Feinstaub_from_LuftdatenInfo");
             pullFromServer("https://api.waqi.info/feed/here/?token="+getString(R.string.aqi_open_data), "WAQI");
         }
 

@@ -5,7 +5,9 @@ import android.os.Parcel;
 import android.os.Parcelable;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by Benjamin Dahlhoff on 31.01.17.
@@ -27,6 +29,7 @@ public class Station implements Parcelable {
     private final List<Measurement> mMeasurements = new ArrayList<>();
 
     public Station() {
+        // Need this to make class parcelable
     }
 
     public int getLocationId() {
@@ -87,7 +90,7 @@ public class Station implements Parcelable {
         if (mTemperature.size() > 0) {
             double means_temperature = means(mTemperature);
             Measurement mTemp = new Measurement("TEMP", means_temperature, "°C",
-                    Color.parseColor("#00796B"));
+                    Color.parseColor("#007bd2"));
             mMeasurements.add(mTemp);
         }
 
@@ -96,7 +99,7 @@ public class Station implements Parcelable {
         if (mHumidity.size() > 0) {
             double means_humidity = means(mHumidity);
             Measurement mHUM = new Measurement("HUMIDITY", means_humidity, "%",
-                    Color.parseColor("#00796B"));
+                    Color.parseColor("#BFB600"));
             mMeasurements.add(mHUM);
         }
     }
@@ -118,6 +121,10 @@ public class Station implements Parcelable {
             }
         }
         return 0;
+    }
+
+    public List<Measurement> getMeasurements() {
+        return mMeasurements;
     }
 
     @Override
@@ -151,10 +158,6 @@ public class Station implements Parcelable {
         in.readList(mTemperature, Double.class.getClassLoader());
         mDistance = in.readInt();
         in.readList(mMeasurements, Measurement.class.getClassLoader());
-    }
-
-    public List<Measurement> getMeasurements() {
-        return mMeasurements;
     }
 
     public static final Creator<Station> CREATOR = new Creator<Station>() {
