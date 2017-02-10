@@ -80,6 +80,7 @@ public class MainActivity extends AppCompatActivity {
 
             //pullFromServer("http://api.openweathermap.org/pollution/v1/co/" + latInt + "," + longInt + "/current.json?appid="+getString(R.string.openweathermap), "CO_from_OpenWeatherMap");
             pullFromServer("http://api.luftdaten.info/static/v1/data.json", "Feinstaub_from_LuftdatenInfo");
+
             pullFromServer("https://api.waqi.info/feed/here/?token="+getString(R.string.aqi_open_data), "WAQI");
         }
 

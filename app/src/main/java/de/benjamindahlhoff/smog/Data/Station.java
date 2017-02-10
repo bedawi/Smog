@@ -14,7 +14,7 @@ import java.util.Map;
  * This class holds data for each individual Measurement Station of the Stuttgart Air Pollution
  * Project Luftdaten.info
  *
- * The name of the class comes from the German word for Particulates in the air "Feinstaub".
+ * @author Benjamin Dahlhoff
  */
 
 public class Station implements Parcelable {
@@ -28,14 +28,25 @@ public class Station implements Parcelable {
     private int mDistance;
     private final List<Measurement> mMeasurements = new ArrayList<>();
 
+    /**
+     * Default constructor
+     */
     public Station() {
         // Need this to make class parcelable
     }
 
+    /**
+     * Return location id of weather station. This is an int value identifying the station
+     * @return location identifier of weather station
+     */
     public int getLocationId() {
         return mLocationId;
     }
 
+    /**
+     * Set a loction id
+     * @param locationId
+     */
     public void setLocationId(int locationId) {
         mLocationId = locationId;
     }
@@ -64,10 +75,19 @@ public class Station implements Parcelable {
         return mDistance;
     }
 
+    /**
+     * We store the distance of the station to the current position of the user, let's
+     * hope he does not beam over while loading data.
+     * @param distance  in KM
+     */
     public void setDistance(int distance) {
         mDistance = distance;
     }
 
+    /**
+     * If the weather station provides us many sets of data from from some timeframe, we
+     * calculate the mean values here
+     */
     public void calculateMeanValues() {
 
         // PM10
@@ -95,7 +115,7 @@ public class Station implements Parcelable {
         }
 
 
-        // Temperature:
+        // Humidity:
         if (mHumidity.size() > 0) {
             double means_humidity = means(mHumidity);
             Measurement mHUM = new Measurement("HUMIDITY", means_humidity, "%",
@@ -104,6 +124,13 @@ public class Station implements Parcelable {
         }
     }
 
+    /**
+     * Return the color representation for air quality.
+     * This needs to be fixed to work for other data (humidity, temperature, SO2...)
+     * Also the data should come from colors.xml instead of being hard coded.
+     * @param value     a measurement value
+     * @return          a color as integer
+     */
     public int getAirQualityColor(double value) {
         if (value <= 25) { return Color.parseColor("#00796B"); }
         if (value <= 50) { return Color.parseColor("#F9A825"); }
@@ -114,6 +141,12 @@ public class Station implements Parcelable {
         return Color.parseColor("#001996");
     }
 
+    /**
+     * Get value of a measurement (name)
+     * @param name      Name of measurement
+     * @return          value as integer
+     * We return integer because the long numbers do not fit into our GUI
+     */
     public int getValueFor (String name) {
         for (int i=0; i< mMeasurements.size(); i++) {
             if (mMeasurements.get(i).getName().equals(name)) {
@@ -123,10 +156,20 @@ public class Station implements Parcelable {
         return 0;
     }
 
+    /**
+     * All the measurements
+     * @return  Measurement.class
+     */
     public List<Measurement> getMeasurements() {
         return mMeasurements;
     }
 
+    /**
+     * The following methods are part of the parcelable implementation:
+     * https://developer.android.com/reference/android/os/Parcelable.html
+     *
+     * @return
+     */
     @Override
     public int describeContents() {
         return 0;
@@ -172,6 +215,13 @@ public class Station implements Parcelable {
         }
     };
 
+    /**
+     * Calculate the mean value from a list of double values
+     * (Yes this can be done easier with lambdas, but backwards compatibility of this app
+     * prevents us from using them.
+     * @param list      List of doubles
+     * @return          result as double
+     */
     private double means (List<Double> list) {
         double sum = 0;
         for (int i = 0; i < list.size(); i++) {

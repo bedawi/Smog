@@ -21,7 +21,11 @@ import de.benjamindahlhoff.smog.R;
 import de.benjamindahlhoff.smog.UI.MainActivity;
 
 /**
+ * StationsAdapter show a vertical list of all weather stations
+ * @author Benjamin Dahlhoff
+ * @version 2017-02-10
  * Created by Benjamin Dahlhoff on 04.02.17.
+ * Please refer to for a short explanation: https://benjamindahlhoff.de/2017/02/10/recyclerviews-at-work/
  */
 
 public class StationsAdapter extends RecyclerView.Adapter<StationsAdapter.StationsViewHolder> {
@@ -31,24 +35,35 @@ public class StationsAdapter extends RecyclerView.Adapter<StationsAdapter.Statio
     private Context mContext;
     private static RecyclerView measurementsList;
 
-    public class StationsViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+
+    public class StationsViewHolder extends RecyclerView.ViewHolder
+            implements View.OnClickListener {
 
         public TextView mStationInfoView;
         private MeasurementsAdapter mMeasurementsAdapter;
 
-
+        /**
+         * Constructor of inner class StationsViewHolder
+         * @param itemView
+         */
         public StationsViewHolder(View itemView) {
             super(itemView);
             Context context = itemView.getContext();
             mStationInfoView = (TextView) itemView.findViewById(R.id.stationInfoText);
             itemView.setOnClickListener(this);
-            measurementsList = (RecyclerView) itemView.findViewById(R.id.measurementsListRecyclerView);
-            measurementsList.setLayoutManager(new LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false));
+            measurementsList = (RecyclerView) itemView.findViewById(R.id.
+                    measurementsListRecyclerView);
+            measurementsList.setLayoutManager(new LinearLayoutManager(context,
+                    LinearLayoutManager.HORIZONTAL, false));
             mMeasurementsAdapter = new MeasurementsAdapter();
             measurementsList.setAdapter(mMeasurementsAdapter);
 
         }
 
+        /**
+         * Bind weather station to view
+         * @param station is a class containing data of one weather station
+         */
         public void bindStation (Station station) {
             mStationInfoView.setText(String.format(mContext.getString(R.string.stationinfo)
                             + " %s Km, "
@@ -64,17 +79,33 @@ public class StationsAdapter extends RecyclerView.Adapter<StationsAdapter.Statio
             mMeasurementsAdapter.notifyDataSetChanged();
         }
 
+        /**
+         * What shall be done when item in vertical list is clicked
+         * @param v
+         */
         @Override
         public void onClick(View v) {
             // Nothing happens here .... yet :-P
         }
     }
 
+    /**
+     * Constructor of StationsAdapter
+     * @param context   Context (from StationsListActivity)
+     * @param stations  Custom class holding data of one weather station
+     */
     public StationsAdapter(Context context, ArrayList<Station> stations) {
         mStations.addAll(stations);
         mContext = context;
     }
 
+    /**
+     * Will be executed when view holder is created. In here the content of the RecyclerView
+     * as defined in stations_list_item.xml is created (inflated).
+     * @param parent
+     * @param viewType
+     * @return
+     */
     @Override
     public StationsViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext())
@@ -83,9 +114,17 @@ public class StationsAdapter extends RecyclerView.Adapter<StationsAdapter.Statio
         return viewHolder;
     }
 
+    /**
+     * When binding the view holder define the data show inside of it
+     * @param holder
+     * @param position
+     */
     @Override
     public void onBindViewHolder(StationsViewHolder holder, int position) {
+        // Bind the station to holder
         holder.bindStation(mStations.get(position));
+
+        // Prepare data to hand over to inner adapter/holder
         String[] name = new String[mStations.get(position).getMeasurements().size()];
         double[] value = new double[mStations.get(position).getMeasurements().size()];
         String[] units = new String[mStations.get(position).getMeasurements().size()];
@@ -97,12 +136,17 @@ public class StationsAdapter extends RecyclerView.Adapter<StationsAdapter.Statio
             units[i] = mStations.get(position).getMeasurements().get(i).getUnits();
             color[i] = mStations.get(position).getMeasurements().get(i).getColorInterpretation();
         }
+
+        // bind the inner measurement adapter to this holder:
+
         // holder.mMeasurementsAdapter.setMeasurements(mStations.get(position).getMeasurements());
         holder.mMeasurementsAdapter.setMeasurements(name, value, units, color);
-        //Log.v(TAG, "Station:"+ mStations.get(position).getLocationId() +" PM10:"+mStations.get(position).getMeasurements().get(0).getValue());
-
     }
 
+    /**
+     * determine how many items are in this list
+     * @return
+     */
     @Override
     public int getItemCount() {
         return mStations.size();

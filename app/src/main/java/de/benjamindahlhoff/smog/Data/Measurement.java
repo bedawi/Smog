@@ -5,8 +5,8 @@ import android.os.Parcelable;
 
 /**
  * Created by Benjamin Dahlhoff on 07.02.17.
- *
- *
+ * This class is a data model to store data from weather data
+ * @author Benjamin Dahlhoff
  */
 
 public class Measurement implements Parcelable {
@@ -15,6 +15,13 @@ public class Measurement implements Parcelable {
     private String mUnits;
     private int mColorInterpretation;
 
+    /**
+     * Default constructor containing all the fields
+     * @param name      e.g. "PM10"
+     * @param value     e.g. 1245.12345
+     * @param units     e.g. "µg/m3"
+     * @param colorInterpretation   Color converted to int
+     */
     public Measurement(String name, double value, String units, int colorInterpretation) {
         this.mName = name;
         this.mValue = value;
@@ -38,6 +45,11 @@ public class Measurement implements Parcelable {
         return mColorInterpretation;
     }
 
+    /**
+     * Making the data of this class parcelable
+     * https://developer.android.com/reference/android/os/Parcelable.html
+     * @param in
+     */
     protected Measurement(Parcel in) {
         mName = in.readString();
         mValue = in.readDouble();
