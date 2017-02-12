@@ -15,6 +15,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import de.benjamindahlhoff.smog.Data.AQI;
 import de.benjamindahlhoff.smog.Data.Station;
 import de.benjamindahlhoff.smog.Data.Stations;
 import de.benjamindahlhoff.smog.R;
@@ -65,12 +66,16 @@ public class StationsAdapter extends RecyclerView.Adapter<StationsAdapter.Statio
          * @param station is a class containing data of one weather station
          */
         public void bindStation (Station station) {
+            AQI qualityIndex = new AQI();
+            int aqi = qualityIndex.calculateIndex(station.getValueFor("PM10"), "PM10");
             mStationInfoView.setText(String.format(mContext.getString(R.string.stationinfo)
                             + " %s Km, "
                             + mContext.getString(R.string.station_id)
-                            + " %s",
+                            + " %s. "
+                            + "AQI for PM10 is: %s",
                     station.getDistance(),
-                    station.getLocationId()));
+                    station.getLocationId(),
+                    aqi));
             /**
              * Never forget this line: It took me three days to find out what was wrong with
              * my program. If adapter.notifyDataSetChanged is not called, the list will show

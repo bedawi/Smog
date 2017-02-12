@@ -20,14 +20,17 @@ import android.widget.TextView;
 import android.widget.Toast;
 import org.json.JSONArray;
 import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import de.benjamindahlhoff.smog.Data.Interpreter_Luftdaten;
+import de.benjamindahlhoff.smog.Data.Interpreter_WAQI;
 import de.benjamindahlhoff.smog.Data.Station;
 import de.benjamindahlhoff.smog.Data.Stations;
 import de.benjamindahlhoff.smog.Data.Position;
@@ -201,15 +204,14 @@ public class MainActivity extends AppCompatActivity {
     private void extractDataForService(String service, String data) throws JSONException {
         if (service == "CO_from_OpenWeatherMap") {
 
+
         }
         if (service == "Feinstaub_from_LuftdatenInfo") {
-            // Data comes as huge Array:
-            JSONArray luftDaten = new JSONArray(data);
-
             // Lets loop through the data and add the stations to the List.
             mStations.clear();
             Interpreter_Luftdaten luftdaten = new Interpreter_Luftdaten();
-            mStations.injectStations(luftdaten.converter(luftDaten, mCurrentPosition));
+
+            mStations.injectStations(luftdaten.converter(new JSONArray(data), mCurrentPosition));
             mStations.sortByDistance();
             mStations.calculateMeans();
 
@@ -222,14 +224,10 @@ public class MainActivity extends AppCompatActivity {
         } // *** END if (service == "Feinstaub_from_LuftdatenInfo")
 
         if (service == "WAQI") {
-            /*
-            JSONArray WAQIData = new JSONArray(data);
-            for (int i = 0; i<WAQIData.length(); i++) {
-                mStations.addData_fromWAQI(WAQIData.getJSONObject(i));
-            }
-            mStations.sortByDistance();
-            mStations.calculateMeans();
-*/
+            Interpreter_WAQI waqi = new Interpreter_WAQI();
+            ArrayList<Station> temporaryTestListDeleteMe = new ArrayList<>();
+            temporaryTestListDeleteMe.addAll(waqi.converter(data, mCurrentPosition));
+            Log.v(TAG, "Back from WAQI interpretation");
         }
 
     }
