@@ -1,7 +1,6 @@
 package de.benjamindahlhoff.smog.Data;
 
 import android.content.Context;
-import android.graphics.Color;
 
 import de.benjamindahlhoff.smog.R;
 
@@ -60,7 +59,7 @@ public class AQI {
      *                      [ O3, PM25, PM10, CO, SO2, NO2 ]
      * @return              int: color as integer
      */
-    public int getColorFromValue (double concentration, String pollutant) {
+    public int getColorFromConcentration(double concentration, String pollutant) {
         return getColor(calculateIndex(concentration, pollutant));
     }
 
