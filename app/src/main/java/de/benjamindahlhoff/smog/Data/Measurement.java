@@ -13,6 +13,7 @@ public class Measurement implements Parcelable {
     private String mName;
     private double mValue;
     private String mUnits;
+    private int mAQI;
     private int mColorInterpretation;
 
     /**
@@ -22,10 +23,11 @@ public class Measurement implements Parcelable {
      * @param units     e.g. "µg/m3"
      * @param colorInterpretation   Color converted to int
      */
-    public Measurement(String name, double value, String units, int colorInterpretation) {
+    public Measurement(String name, double value, String units, int aqi, int colorInterpretation) {
         this.mName = name;
         this.mValue = value;
         this.mUnits = units;
+        this.mAQI = aqi;
         this.mColorInterpretation = colorInterpretation;
     }
 
@@ -54,6 +56,7 @@ public class Measurement implements Parcelable {
         mName = in.readString();
         mValue = in.readDouble();
         mUnits = in.readString();
+        mAQI = in.readInt();
         mColorInterpretation = in.readInt();
     }
 
@@ -79,6 +82,7 @@ public class Measurement implements Parcelable {
         dest.writeString(mName);
         dest.writeDouble(mValue);
         dest.writeString(mUnits);
+        dest.writeInt(mAQI);
         dest.writeInt(mColorInterpretation);
     }
 }

@@ -3,14 +3,15 @@
     <color name="colorPrimary">#FF0000</color>
     <color name="colorPrimaryDark">#303f9f</color>
     <color name="colorAccent">#FF4081</color>
-    <color name="color_air_good">#00796B</color>
-    <color name="color_air_fair">#F9A825</color>
-    <color name="color_air_notgood">#E65100</color>
-    <color name="color_air_bad">#DD2C00</color>
-    <color name="color_air_worse">#960084</color>
-    <color name="color_air_armageddon">#001996</color>
+    <color name="aqi_good">#8EB135</color>
+    <color name="aqi_moderate">#FFC330</color>
+    <color name="aqi_unhealthy_sensitivy">#FF5E19</color>
+    <color name="aqi_unhealthy">#931423</color>
+    <color name="aqi_very_unhealty">#98044C</color>
+    <color name="aqi_hazardous">#7D0024</color>
     <color name="color_temp_low">#007bd2</color>
     <color name="color_temp_warm">#FF5600</color>
     <color name="color_humidity_arid">#BFB600</color>
     <color name="color_humidity_wet">#0096D2</color>
+    <string name="testcolor">test</string>
 </resources>

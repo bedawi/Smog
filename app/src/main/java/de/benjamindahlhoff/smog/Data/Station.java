@@ -1,13 +1,10 @@
 package de.benjamindahlhoff.smog.Data;
 
-import android.graphics.Color;
 import android.os.Parcel;
 import android.os.Parcelable;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Created by Benjamin Dahlhoff on 31.01.17.
@@ -30,9 +27,9 @@ public class Station implements Parcelable {
 
     /**
      * Default constructor
+     * Needed to make class parcelable
      */
     public Station() {
-        // Need this to make class parcelable
     }
 
     /**
@@ -51,28 +48,93 @@ public class Station implements Parcelable {
         mLocationId = locationId;
     }
 
+    /**
+     * Add value to humidity set
+     * @param humidity
+     */
     public void addHumidity(double humidity) {
         mHumidity.add(humidity);
     }
 
+    /**
+     * Add value to temperature set
+     * @param temperature
+     */
     public void addTemperature(double temperature) {
         mTemperature.add(temperature);
     }
 
+    /**
+     * Set position of station
+     * @param position
+     */
     public void setPosition(Position position) {
         mPosition = position;
     }
 
+    /**
+     * Add value to PM 10 set
+     * @param p1Value
+     */
     public void addPM10Value(double p1Value) {
         mPM10Values.add(p1Value);
     }
 
+    /**
+     * Add value to PM 2.5 set
+     * @param p2Value
+     */
     public void addPM25Value(double p2Value) {
         mPM25Values.add(p2Value);
     }
 
+    /**
+     * Get distance
+     * @return  Distance
+     */
     public int getDistance() {
         return mDistance;
+    }
+
+    /**
+     * Get list of all temperature values
+     * @return
+     */
+    public List<Double> getTemperature() {
+        return mTemperature;
+    }
+
+    /**
+     * Get list of all PM 10 values
+     * @return
+     */
+    public List<Double> getPM10Values() {
+        return mPM10Values;
+    }
+
+    /**
+     * Get list of all PM 2.5 values
+     * @return
+     */
+    public List<Double> getPM25Values() {
+        return mPM25Values;
+    }
+
+    /**
+     * Get list of all humidity values
+     * @return
+     */
+    public List<Double> getHumidity() {
+        return mHumidity;
+    }
+
+    /**
+     * The "measurements" are the mean values of each set. Every measurement represents one
+     * field in visualisation of the station.
+     * @param measurement
+     */
+    public void addMeasurement (Measurement measurement) {
+        mMeasurements.add(measurement);
     }
 
     /**
@@ -84,62 +146,6 @@ public class Station implements Parcelable {
         mDistance = distance;
     }
 
-    /**
-     * If the weather station provides us many sets of data from from some timeframe, we
-     * calculate the mean values here
-     */
-    public void calculateMeanValues() {
-
-        // PM10
-        if (mPM10Values.size() > 0) {
-            double means_pm10 = means(mPM10Values);
-            Measurement mPM10 = new Measurement("PM10", means_pm10, "µg/m3",
-                    getAirQualityColor(means_pm10));
-            mMeasurements.add(mPM10);
-        }
-
-        // PM2.5
-        if (mPM25Values.size() > 0) {
-            double means_pm25 = means(mPM25Values);
-            Measurement mPM25 = new Measurement("PM25", means_pm25, "µg/m3",
-                    getAirQualityColor(means_pm25));
-            mMeasurements.add(mPM25);
-        }
-
-        // Temperature:
-        if (mTemperature.size() > 0) {
-            double means_temperature = means(mTemperature);
-            Measurement mTemp = new Measurement("TEMP", means_temperature, "°C",
-                    Color.parseColor("#007bd2"));
-            mMeasurements.add(mTemp);
-        }
-
-
-        // Humidity:
-        if (mHumidity.size() > 0) {
-            double means_humidity = means(mHumidity);
-            Measurement mHUM = new Measurement("HUMIDITY", means_humidity, "%",
-                    Color.parseColor("#BFB600"));
-            mMeasurements.add(mHUM);
-        }
-    }
-
-    /**
-     * Return the color representation for air quality.
-     * This needs to be fixed to work for other data (humidity, temperature, SO2...)
-     * Also the data should come from colors.xml instead of being hard coded.
-     * @param value     a measurement value
-     * @return          a color as integer
-     */
-    public int getAirQualityColor(double value) {
-        if (value <= 25) { return Color.parseColor("#00796B"); }
-        if (value <= 50) { return Color.parseColor("#F9A825"); }
-        if (value <= 75) { return Color.parseColor("#E65100"); }
-        if (value <= 100) { return Color.parseColor("#DD2C00"); }
-        if (value <= 200) { return Color.parseColor("#960084"); }
-        if (value > 200) { return Color.parseColor("#001996"); }
-        return Color.parseColor("#001996");
-    }
 
     /**
      * Get value of a measurement (name)
@@ -163,6 +169,8 @@ public class Station implements Parcelable {
     public List<Measurement> getMeasurements() {
         return mMeasurements;
     }
+
+
 
     /**
      * The following methods are part of the parcelable implementation:

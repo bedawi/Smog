@@ -47,13 +47,14 @@ public class MainActivity extends AppCompatActivity {
     private static final int PERMISSION_ACCESS_COARSE_LOCATION = 1;
     public static final String FEINSTAUB_STATIONS = "FEINSTAUB_STATIONS";
     private static final String KEY_STATIONS = "KEY_STATIONS";
+    public static Context mContext;
 
     // Our current position is stored in
     private Position mCurrentPosition = new Position();
 
 
-    // Feinstaub
-    private Stations mStations = new Stations();
+    // Weatherstations
+    private Stations mStations = new Stations(this);
 
 
     // Buttons
@@ -64,6 +65,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        mContext = getApplicationContext();
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
 
@@ -213,7 +215,7 @@ public class MainActivity extends AppCompatActivity {
 
             mStations.injectStations(luftdaten.converter(new JSONArray(data), mCurrentPosition));
             mStations.sortByDistance();
-            mStations.calculateMeans();
+            mStations.calculateMeanValues();
 
             runOnUiThread(new Runnable() {
                 @Override

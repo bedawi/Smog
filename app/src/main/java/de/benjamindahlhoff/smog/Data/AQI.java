@@ -1,5 +1,10 @@
 package de.benjamindahlhoff.smog.Data;
 
+import android.content.Context;
+import android.graphics.Color;
+
+import de.benjamindahlhoff.smog.R;
+
 /**
  * Created by benjamin on 12.02.17.
  *
@@ -10,6 +15,12 @@ package de.benjamindahlhoff.smog.Data;
  */
 
 public class AQI {
+
+    Context mContext;
+
+    public AQI(Context context) {
+        mContext = context;
+    }
 
     /**
      * Calculates Air Quality Index from concentration.
@@ -33,8 +44,13 @@ public class AQI {
      * @return      int: color as integer
      */
     public int getColor (int aqi) {
-        // TO DO: Write this method
-        return 0;
+        if (aqi >= 0 && aqi <= 50) return mContext.getColor(R.color.aqi_good);
+        if (aqi >= 51 && aqi <= 100) return mContext.getColor(R.color.aqi_moderate);
+        if (aqi >= 101 && aqi <= 150) return mContext.getColor(R.color.aqi_unhealthy_sensitivy);
+        if (aqi >= 151 && aqi <= 200) return mContext.getColor(R.color.aqi_unhealthy);
+        if (aqi >= 201 && aqi <= 300) return mContext.getColor(R.color.aqi_very_unhealty);
+        if (aqi >= 301) return mContext.getColor(R.color.aqi_hazardous);
+        return mContext.getColor(R.color.aqi_good);
     }
 
     /**
