@@ -3,11 +3,14 @@
                 android:id="@+id/measurementBox"
                 android:layout_width="80dp"
                 android:layout_height="80dp"
-                android:background="@android:color/holo_green_dark"
+                android:background="@android:color/darker_gray"
                 android:clickable="true"
                 android:orientation="vertical"
                 android:gravity="center_vertical"
-                android:layout_margin="4dp">
+                android:layout_marginTop="4dp"
+                android:layout_marginBottom="4dp"
+                android:layout_marginLeft="0dp"
+                android:layout_marginRight="8dp">
 
     <TextView
         android:id="@+id/measurementTypeTextView"

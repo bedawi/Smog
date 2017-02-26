@@ -7,20 +7,14 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import de.benjamindahlhoff.smog.Data.AQI;
 import de.benjamindahlhoff.smog.Data.Station;
-import de.benjamindahlhoff.smog.Data.Stations;
 import de.benjamindahlhoff.smog.R;
-import de.benjamindahlhoff.smog.UI.MainActivity;
 
 /**
  * StationsAdapter show a vertical list of all weather stations
@@ -73,13 +67,10 @@ public class StationsAdapter extends RecyclerView.Adapter<StationsAdapter.Statio
             mStationInfoView.setText(String.format(mContext.getString(R.string.stationinfo)
                             + " %s Km, "
                             + mContext.getString(R.string.station_id)
-                            + " %s. "
-                            + "AQI for PM10 (%s) is: %s",
+                            + " %s",
                     station.getDistance(),
-                    station.getLocationId(),
-                    station.getValueFor("PM10"),
-                    aqi));
-
+                    station.getLocationId()
+                    ));
             /**
              * Never forget this line: It took me three days to find out what was wrong with
              * my program. If adapter.notifyDataSetChanged is not called, the list will show
@@ -113,7 +104,7 @@ public class StationsAdapter extends RecyclerView.Adapter<StationsAdapter.Statio
 
     /**
      * Will be executed when view holder is created. In here the content of the RecyclerView
-     * as defined in stations_list_item.xml is created (inflated).
+     * as defined in stations_list.xmlreated (inflated).
      * @param parent
      * @param viewType
      * @return
@@ -121,7 +112,7 @@ public class StationsAdapter extends RecyclerView.Adapter<StationsAdapter.Statio
     @Override
     public StationsViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.stations_list_item, parent, false);
+                .inflate(R.layout.stations_list, parent, false);
         StationsViewHolder viewHolder = new StationsViewHolder(view);
         return viewHolder;
     }
