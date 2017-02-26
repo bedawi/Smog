@@ -9,6 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -78,6 +79,7 @@ public class StationsAdapter extends RecyclerView.Adapter<StationsAdapter.Statio
                     station.getLocationId(),
                     station.getValueFor("PM10"),
                     aqi));
+
             /**
              * Never forget this line: It took me three days to find out what was wrong with
              * my program. If adapter.notifyDataSetChanged is not called, the list will show
@@ -86,7 +88,6 @@ public class StationsAdapter extends RecyclerView.Adapter<StationsAdapter.Statio
              * There are still bugs: With notifyDataSetChanged set, the RecyclerView scrolls endlessly,
              * check https://developer.android.com/reference/android/support/v7/widget/RecyclerView.Adapter.html
              */
-
             mMeasurementsAdapter.notifyDataSetChanged();
         }
 
@@ -96,7 +97,7 @@ public class StationsAdapter extends RecyclerView.Adapter<StationsAdapter.Statio
          */
         @Override
         public void onClick(View v) {
-            // Nothing happens here .... yet :-P
+            Log.v(TAG, "Station clicked");
         }
     }
 

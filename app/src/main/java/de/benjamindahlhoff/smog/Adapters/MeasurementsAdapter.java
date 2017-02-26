@@ -62,20 +62,10 @@ public class MeasurementsAdapter extends RecyclerView.Adapter<MeasurementsAdapte
         }
 
         public void bindMeasurement (String name, double value, String unit, int color) {
-            /*
-            * Changed this while searching for bugs:
-            * Not sure if I want to revert it to this again.
-            * Need to discuss this with other programmers.
-            mNameView.setText(measurement.getName());
-            mValueView.setText(String.valueOf(measurement.getValue()));
-            mUnitsView.setText(measurement.getUnits());
-            mBoxLayout.setBackgroundColor(measurement.getColorInterpretation());
-            */
             mNameView.setText(name);
             mValueView.setText(String.valueOf(Math.round(value)));
             mUnitsView.setText(unit);
             mBoxLayout.setBackgroundColor(color);
-            // Log.v(TAG, name + " " + value);
         }
     }
 }
