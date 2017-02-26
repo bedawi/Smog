@@ -54,34 +54,41 @@ public class StationsAdapter extends RecyclerView.Adapter<StationsAdapter.Statio
             itemView.setOnClickListener(this);
             measurementsList = (RecyclerView) itemView.findViewById(R.id.
                     measurementsListRecyclerView);
-            measurementsList.setLayoutManager(new LinearLayoutManager(context,
-                    LinearLayoutManager.HORIZONTAL, false));
+
             mMeasurementsAdapter = new MeasurementsAdapter();
             measurementsList.setAdapter(mMeasurementsAdapter);
 
+            measurementsList.setLayoutManager(new LinearLayoutManager(context,
+                    LinearLayoutManager.HORIZONTAL, false));
         }
 
         /**
          * Bind weather station to view
          * @param station is a class containing data of one weather station
          */
-        public void bindStation (Station station) {
+        public void bindStation (Station station, int position) {
             AQI qualityIndex = new AQI(mContext);
             int aqi = qualityIndex.calculateIndex(station.getValueFor("PM10"), "PM10");
             mStationInfoView.setText(String.format(mContext.getString(R.string.stationinfo)
                             + " %s Km, "
                             + mContext.getString(R.string.station_id)
                             + " %s. "
-                            + "AQI for PM10 is: %s",
+                            + "AQI for PM10 (%s) is: %s",
                     station.getDistance(),
                     station.getLocationId(),
+                    station.getValueFor("PM10"),
                     aqi));
             /**
              * Never forget this line: It took me three days to find out what was wrong with
              * my program. If adapter.notifyDataSetChanged is not called, the list will show
              * wrong measurements when scrolling up in the primary RecyclerView.
+             *
+             * There are still bugs: With notifyDataSetChanged set, the RecyclerView scrolls endlessly,
+             * check https://developer.android.com/reference/android/support/v7/widget/RecyclerView.Adapter.html
              */
+
             mMeasurementsAdapter.notifyDataSetChanged();
+            //mMeasurementsAdapter.notifyItemChanged(position); // does not fix error
         }
 
         /**
@@ -100,7 +107,7 @@ public class StationsAdapter extends RecyclerView.Adapter<StationsAdapter.Statio
      * @param stations  Custom class holding data of one weather station
      */
     public StationsAdapter(Context context, ArrayList<Station> stations) {
-        mStations.addAll(stations);
+        if (mStations.size() == 0) mStations.addAll(stations);
         mContext = context;
     }
 
@@ -127,7 +134,7 @@ public class StationsAdapter extends RecyclerView.Adapter<StationsAdapter.Statio
     @Override
     public void onBindViewHolder(StationsViewHolder holder, int position) {
         // Bind the station to holder
-        holder.bindStation(mStations.get(position));
+        holder.bindStation(mStations.get(position), position);
 
         // Prepare data to hand over to inner adapter/holder
         String[] name = new String[mStations.get(position).getMeasurements().size()];
@@ -137,14 +144,18 @@ public class StationsAdapter extends RecyclerView.Adapter<StationsAdapter.Statio
 
         for (int i=0; i<mStations.get(position).getMeasurements().size(); i++) {
             name[i] = mStations.get(position).getMeasurements().get(i).getName();
+            switch (mStations.get(position).getMeasurements().get(i).getName()) {
+                case "PM10": name[i] = mContext.getString(R.string.PM10); break;
+                case "PM25": name[i] = mContext.getString(R.string.PM25); break;
+                case "TEMP": name[i] = mContext.getString(R.string.TEMP); break;
+                case "HUMIDITY": name[i] = mContext.getString(R.string.HUMIDITY); break;
+            }
             value[i] = mStations.get(position).getMeasurements().get(i).getValue();
             units[i] = mStations.get(position).getMeasurements().get(i).getUnits();
             color[i] = mStations.get(position).getMeasurements().get(i).getColorInterpretation();
         }
 
-        // bind the inner measurement adapter to this holder:
-
-        // holder.mMeasurementsAdapter.setMeasurements(mStations.get(position).getMeasurements());
+        // Bind the inner measurementsAdapter to this holder and pass values:
         holder.mMeasurementsAdapter.setMeasurements(name, value, units, color);
     }
 
