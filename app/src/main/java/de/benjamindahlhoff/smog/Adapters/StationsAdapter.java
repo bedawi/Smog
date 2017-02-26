@@ -24,7 +24,7 @@ import de.benjamindahlhoff.smog.UI.MainActivity;
 /**
  * StationsAdapter show a vertical list of all weather stations
  * @author Benjamin Dahlhoff
- * @version 2017-02-10
+ * @version 2017-02-26
  * Created by Benjamin Dahlhoff on 04.02.17.
  * Please refer to for a short explanation: https://benjamindahlhoff.de/2017/02/10/recyclerviews-at-work/
  */
@@ -88,7 +88,6 @@ public class StationsAdapter extends RecyclerView.Adapter<StationsAdapter.Statio
              */
 
             mMeasurementsAdapter.notifyDataSetChanged();
-            //mMeasurementsAdapter.notifyItemChanged(position); // does not fix error
         }
 
         /**
