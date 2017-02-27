@@ -13,6 +13,8 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.RelativeLayout;
@@ -57,11 +59,6 @@ public class MainActivity extends AppCompatActivity {
     private Stations mStations = new Stations(this);
 
 
-    // Buttons
-    @BindView(R.id.reloadButton) Button mReloadButton;
-    @BindView(R.id.showStationsButton) Button mStationsButton;
-
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -84,22 +81,8 @@ public class MainActivity extends AppCompatActivity {
             int longInt = (int) longi;
 
             //pullFromServer("http://api.openweathermap.org/pollution/v1/co/" + latInt + "," + longInt + "/current.json?appid="+getString(R.string.openweathermap), "CO_from_OpenWeatherMap");
-            pullFromServer("http://api.luftdaten.info/static/v1/data.json", "Feinstaub_from_LuftdatenInfo");
-
-            pullFromServer("https://api.waqi.info/feed/here/?token="+getString(R.string.aqi_open_data), "WAQI");
+            loadFromStations("All");
         }
-
-        mReloadButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mReloadButton.setVisibility(View.INVISIBLE);
-                //pullFromServer("http://api.openweathermap.org/pollution/v1/co/" + mCurrentPosition.getLatitude()+ "," + mCurrentPosition.getLongitude()+ "/current.json?appid="+getString(R.string.openweathermap), "CO_from_OpenWeatherMap");
-                pullFromServer("http://api.luftdaten.info/static/v1/data.json", "Feinstaub_from_LuftdatenInfo");
-                mReloadButton.setVisibility(View.VISIBLE);
-
-
-            }
-        });
     }
 
     @Override
@@ -147,6 +130,23 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * Trigger loading data from weather services
+     * @param whichStations ["All"\Name]
+     */
+    private void loadFromStations (String whichStations) {
+        if (whichStations == "All") {
+            Log.v(TAG, "Loading from all Stations");
+            pullFromServer("http://api.luftdaten.info/static/v1/data.json", "Feinstaub_from_LuftdatenInfo");
+            pullFromServer("https://api.waqi.info/feed/here/?token="+getString(R.string.aqi_open_data), "WAQI");
+        }
+    }
+
+    /**
+     * Network access, loading data from single service provider
+     * @param url       API url
+     * @param service   Name of service
+     */
     private void pullFromServer(String url, final String service) {
         Log.v(TAG, "URL: "+ url);
         if (isNetworkAvailable()) {
@@ -187,25 +187,14 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    private boolean isNetworkAvailable() {
-        ConnectivityManager manager = (ConnectivityManager)
-                getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo networkInfo = manager.getActiveNetworkInfo();
-        boolean isAvailable = false;
-        if (networkInfo != null && networkInfo.isConnected()) {
-            isAvailable = true;
-        }
-        return isAvailable;
-    }
-
-    private void alertUserAboutError() {
-        AlertDialogFragment dialog = new AlertDialogFragment();
-        dialog.show(getFragmentManager(), "error_dialog");
-    }
-
+    /**
+     * Extract data from server's response
+     * @param service   Name of service
+     * @param data      Data
+     * @throws JSONException
+     */
     private void extractDataForService(String service, String data) throws JSONException {
         if (service == "CO_from_OpenWeatherMap") {
-
 
         }
         if (service == "Feinstaub_from_LuftdatenInfo") {
@@ -234,17 +223,58 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+    /**
+     * Checks if Network is available
+     * @return  bool: [true|false]
+     */
+    private boolean isNetworkAvailable() {
+        ConnectivityManager manager = (ConnectivityManager)
+                getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo networkInfo = manager.getActiveNetworkInfo();
+        boolean isAvailable = false;
+        if (networkInfo != null && networkInfo.isConnected()) {
+            isAvailable = true;
+        }
+        return isAvailable;
+    }
+
+    private void alertUserAboutError() {
+        AlertDialogFragment dialog = new AlertDialogFragment();
+        dialog.show(getFragmentManager(), "error_dialog");
+    }
+
+
     private void refreshActivity() {
 
     }
 
-    @OnClick(R.id.showStationsButton)
-    public void startFeinstaubStationsActivity (View view) {
-        Intent intent = new Intent(this, StationsListActivity.class);
-        ArrayList<Station> parcel = mStations.getStations();
 
-        intent.putParcelableArrayListExtra(FEINSTAUB_STATIONS, parcel);
-        startActivity(intent);
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.menu_main, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+        int id = item.getItemId();
+
+        if (id == R.id.action_stations) {
+            Intent intent = new Intent(this, StationsListActivity.class);
+            ArrayList<Station> parcel = mStations.getStations();
+
+            intent.putParcelableArrayListExtra(FEINSTAUB_STATIONS, parcel);
+            startActivity(intent);
+        }
+
+        if (id == R.id.action_reload) {
+            loadFromStations("All");
+        }
+        return super.onOptionsItemSelected(item);
     }
 }
