@@ -17,4 +17,5 @@
     <string name="PM25">PM 2.5</string>
     <string name="TEMP">TEMP</string>
     <string name="HUMIDITY">FEUCHTE</string>
+    <string name="action_settings">Einstellungen</string>
 </resources>

@@ -16,5 +16,6 @@
     <string name="PM10">PM 10</string>
     <string name="PM25">PM 2.5</string>
     <string name="TEMP">TEMP</string>
+    <string name="action_settings">Settings</string>
 
 </resources>
