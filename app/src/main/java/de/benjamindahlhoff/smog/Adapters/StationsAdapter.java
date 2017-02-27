@@ -62,8 +62,6 @@ public class StationsAdapter extends RecyclerView.Adapter<StationsAdapter.Statio
          * @param station is a class containing data of one weather station
          */
         public void bindStation (Station station, int position) {
-            AQI qualityIndex = new AQI(mContext);
-            int aqi = qualityIndex.calculateIndex(station.getValueFor("PM10"), "PM10");
             mStationInfoView.setText(String.format(mContext.getString(R.string.stationinfo)
                             + " %s Km, "
                             + mContext.getString(R.string.station_id)
