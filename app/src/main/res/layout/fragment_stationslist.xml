@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                xmlns:tools="http://schemas.android.com/tools"
+                android:orientation="vertical"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:id="@+id/stationsLayout">
+
+    <android.support.v7.widget.RecyclerView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/stationsListRecylerView"
+        tools:listitem="@layout/stations_list"
+        android:scrollbars="vertical"
+        android:background="?android:attr/colorBackground"
+        android:scrollbarSize="20.0sp"
+        android:scrollbarStyle="insideOverlay"
+        >
+    </android.support.v7.widget.RecyclerView>
+
+</RelativeLayout>
