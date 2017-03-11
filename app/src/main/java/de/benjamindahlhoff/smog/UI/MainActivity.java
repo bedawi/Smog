@@ -9,6 +9,8 @@ import android.location.LocationManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -49,6 +51,9 @@ public class MainActivity extends AppCompatActivity {
     private static final int PERMISSION_ACCESS_COARSE_LOCATION = 1;
     public static final String FEINSTAUB_STATIONS = "FEINSTAUB_STATIONS";
     private static final String KEY_STATIONS = "KEY_STATIONS";
+    public static final String STATIONSLIST_FRAGMENT = "stationslist_fragment";
+    public static final String SUMMARY_FRAGMENT = "summary_fragment";
+
     public static Context mContext;
 
     // Our current position is stored in
@@ -270,11 +275,25 @@ public class MainActivity extends AppCompatActivity {
         int id = item.getItemId();
 
         if (id == R.id.action_stations) {
-            Intent intent = new Intent(this, StationsListActivity.class);
             ArrayList<Station> parcel = mStations.getStations();
 
-            intent.putParcelableArrayListExtra(FEINSTAUB_STATIONS, parcel);
-            startActivity(intent);
+            //Intent intent = new Intent(this, StationsListActivity.class);
+            //intent.putParcelableArrayListExtra(FEINSTAUB_STATIONS, parcel);
+            //startActivity(intent);
+
+            Bundle bundle = new Bundle();
+            bundle.putParcelableArrayList(FEINSTAUB_STATIONS, parcel);
+
+            StationslistFragment fragment = new StationslistFragment();
+            fragment.setArguments(bundle);
+
+            FragmentManager fragmentManager = getSupportFragmentManager();
+            FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+            fragmentTransaction.replace(R.id.placeholder, fragment, STATIONSLIST_FRAGMENT);
+            fragmentTransaction.addToBackStack(null);
+            fragmentTransaction.commit();
+
+
         }
 
         if (id == R.id.action_reload) {
