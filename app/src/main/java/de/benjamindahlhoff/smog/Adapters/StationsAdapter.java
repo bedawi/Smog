@@ -16,6 +16,9 @@ import de.benjamindahlhoff.smog.Data.AQI;
 import de.benjamindahlhoff.smog.Data.Station;
 import de.benjamindahlhoff.smog.R;
 
+import static android.R.attr.name;
+import static android.R.attr.value;
+
 /**
  * StationsAdapter show a vertical list of all weather stations
  * @author Benjamin Dahlhoff
@@ -134,10 +137,23 @@ public class StationsAdapter extends RecyclerView.Adapter<StationsAdapter.Statio
         for (int i=0; i<mStations.get(position).getMeasurements().size(); i++) {
             name[i] = mStations.get(position).getMeasurements().get(i).getName();
             switch (mStations.get(position).getMeasurements().get(i).getName()) {
-                case "PM10": name[i] = mContext.getString(R.string.PM10); break;
-                case "PM25": name[i] = mContext.getString(R.string.PM25); break;
-                case "TEMP": name[i] = mContext.getString(R.string.TEMP); break;
-                case "HUMIDITY": name[i] = mContext.getString(R.string.HUMIDITY); break;
+                case "PM10": {
+                    name[i] = mContext.getString(R.string.PM10);
+                    break;
+                }
+                case "PM25": {
+                    name[i] = mContext.getString(R.string.PM25);
+                    break;
+                }
+                case "TEMP": {
+                    name[i] = mContext.getString(R.string.TEMP);
+
+                    break;
+                }
+                case "HUMIDITY": {
+                    name[i] = mContext.getString(R.string.HUMIDITY);
+                    break;
+                }
             }
             value[i] = mStations.get(position).getMeasurements().get(i).getValue();
             units[i] = mStations.get(position).getMeasurements().get(i).getUnits();

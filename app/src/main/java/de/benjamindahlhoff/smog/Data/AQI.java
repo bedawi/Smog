@@ -4,22 +4,21 @@ import android.content.Context;
 
 import de.benjamindahlhoff.smog.R;
 
+import static de.benjamindahlhoff.smog.UI.MainActivity.mContext;
+
 /**
  * Created by benjamin on 12.02.17.
  *
  * This class calculates the Air Quality Index as defined here:
  * https://en.wikipedia.org/wiki/Air_quality_index#Computing_the_AQI
  *
+ * All methods are static, so the class does not need to be instantiated to be used
+ *
  * @author Benjamin Dahlhoff
  */
 
 public class AQI {
 
-    Context mContext;
-
-    public AQI(Context context) {
-        mContext = context;
-    }
 
     /**
      * Calculates Air Quality Index from concentration.
@@ -28,7 +27,7 @@ public class AQI {
      *                      [ O3, PM25, PM10, CO, SO2, NO2 ]
      * @return              int: AQI
      */
-    public int calculateIndex (double concentration, String pollutant) {
+    public static int calculateIndex (double concentration, String pollutant) {
         double  cLow    = getCLow   (pollutant, concentration);
         double  cHigh   = getCHigh  (pollutant, concentration);
         int     iLow    = getILow   (pollutant, concentration);
@@ -39,17 +38,19 @@ public class AQI {
 
     /**
      * Returns the color corresponding to the Air Quality Index
-     * @param aqi   int: AQI
-     * @return      int: color as integer
+     * @param aqi       int: AQI
+     * @param context   Necessary to get colors from the app's context
+     * @return          int: color as integer
+     *
      */
-    public int getColor (int aqi) {
-        if (aqi >= 0 && aqi <= 50) return mContext.getColor(R.color.aqi_good);
-        if (aqi >= 51 && aqi <= 100) return mContext.getColor(R.color.aqi_moderate);
-        if (aqi >= 101 && aqi <= 150) return mContext.getColor(R.color.aqi_unhealthy_sensitivy);
-        if (aqi >= 151 && aqi <= 200) return mContext.getColor(R.color.aqi_unhealthy);
-        if (aqi >= 201 && aqi <= 300) return mContext.getColor(R.color.aqi_very_unhealty);
-        if (aqi >= 301) return mContext.getColor(R.color.aqi_hazardous);
-        return mContext.getColor(R.color.aqi_good);
+    public static int getColor (int aqi, Context context) {
+        if (aqi >= 0 && aqi <= 50) return context.getColor(R.color.aqi_good);
+        if (aqi >= 51 && aqi <= 100) return context.getColor(R.color.aqi_moderate);
+        if (aqi >= 101 && aqi <= 150) return context.getColor(R.color.aqi_unhealthy_sensitivy);
+        if (aqi >= 151 && aqi <= 200) return context.getColor(R.color.aqi_unhealthy);
+        if (aqi >= 201 && aqi <= 300) return context.getColor(R.color.aqi_very_unhealty);
+        if (aqi >= 301) return context.getColor(R.color.aqi_hazardous);
+        return context.getColor(R.color.aqi_good);
     }
 
     /**
@@ -57,10 +58,11 @@ public class AQI {
      * @param concentration double: concentration of pollutant
      * @param pollutant     String: name of pullutant
      *                      [ O3, PM25, PM10, CO, SO2, NO2 ]
+     * @param context       Context of application
      * @return              int: color as integer
      */
-    public int getColorFromConcentration(double concentration, String pollutant) {
-        return getColor(calculateIndex(concentration, pollutant));
+    public static int getColorFromConcentration(double concentration, String pollutant, Context context) {
+        return getColor(calculateIndex(concentration, pollutant), context);
     }
 
 
@@ -71,7 +73,7 @@ public class AQI {
      * @param concentration double: concentration of pollutant
      * @return              double: high concentration breakpoint
      */
-    private double getCHigh(String pollutant, Double concentration) {
+    private static double getCHigh(String pollutant, Double concentration) {
         double cHigh = -1;
         switch (pollutant) {
             case "O3":
@@ -138,7 +140,7 @@ public class AQI {
      * @param concentration double: concentration of pollutant
      * @return              double: low concentration breakpoint
      */
-    private double getCLow(String pollutant, Double concentration) {
+    private static double getCLow(String pollutant, Double concentration) {
         double cLow = -1;
         switch (pollutant) {
             case "O3":
@@ -197,7 +199,7 @@ public class AQI {
      * @param concentration     double: concentration
      * @return                  int: getIHigh
      */
-    private int getIHigh(String pollutant, double concentration) {
+    private static int getIHigh(String pollutant, double concentration) {
         int iHigh = -1;
         switch (pollutant) {
             case "O3":
@@ -262,7 +264,7 @@ public class AQI {
      * @param concentration     double: concentration
      * @return                  int: getILow
      */
-    private int getILow(String pollutant, double concentration) {
+    private static int getILow(String pollutant, double concentration) {
         int iLow = 0;
         switch (pollutant) {
             case "O3":

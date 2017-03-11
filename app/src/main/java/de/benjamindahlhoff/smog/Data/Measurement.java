@@ -47,6 +47,10 @@ public class Measurement implements Parcelable {
         return mColorInterpretation;
     }
 
+    public int getAQI() {
+        return mAQI;
+    }
+
     /**
      * Making the data of this class parcelable
      * https://developer.android.com/reference/android/os/Parcelable.html
@@ -85,4 +89,5 @@ public class Measurement implements Parcelable {
         dest.writeInt(mAQI);
         dest.writeInt(mColorInterpretation);
     }
+
 }

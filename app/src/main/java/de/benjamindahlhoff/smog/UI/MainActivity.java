@@ -80,7 +80,6 @@ public class MainActivity extends AppCompatActivity {
             double longi = mCurrentPosition.getLongitude();
             int longInt = (int) longi;
 
-            //pullFromServer("http://api.openweathermap.org/pollution/v1/co/" + latInt + "," + longInt + "/current.json?appid="+getString(R.string.openweathermap), "CO_from_OpenWeatherMap");
             loadFromStations("All");
         }
     }
@@ -138,7 +137,13 @@ public class MainActivity extends AppCompatActivity {
         if (whichStations == "All") {
             Log.v(TAG, "Loading from all Stations");
             pullFromServer("http://api.luftdaten.info/static/v1/data.json", "Feinstaub_from_LuftdatenInfo");
-            pullFromServer("https://api.waqi.info/feed/here/?token="+getString(R.string.aqi_open_data), "WAQI");
+            pullFromServer("https://api.waqi.info/feed/geo:"
+                    + mCurrentPosition.getLatitude()
+                    + ";"
+                    + mCurrentPosition.getLongitude()
+                    + "/?token="
+                    + getString(R.string.aqi_open_data), "WAQI");
+            //pullFromServer("http://api.openweathermap.org/pollution/v1/co/" + latInt + "," + longInt + "/current.json?appid="+getString(R.string.openweathermap), "CO_from_OpenWeatherMap");
         }
     }
 
@@ -217,7 +222,7 @@ public class MainActivity extends AppCompatActivity {
         if (service == "WAQI") {
             Interpreter_WAQI waqi = new Interpreter_WAQI();
             ArrayList<Station> temporaryTestListDeleteMe = new ArrayList<>();
-            temporaryTestListDeleteMe.addAll(waqi.converter(data, mCurrentPosition));
+            temporaryTestListDeleteMe.addAll(waqi.converter(new JSONObject(data), mCurrentPosition));
             Log.v(TAG, "Back from WAQI interpretation");
         }
 

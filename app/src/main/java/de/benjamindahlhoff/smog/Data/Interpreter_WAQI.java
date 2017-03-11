@@ -3,6 +3,7 @@ package de.benjamindahlhoff.smog.Data;
 import android.util.Log;
 
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
@@ -30,9 +31,25 @@ public class Interpreter_WAQI {
      *                          Necessary to define distance to station
      * @return                  ArrayList of Station
      */
-    public ArrayList<Station> converter (String data, Position currentPosition) {
+    public ArrayList<Station> converter (JSONObject data, Position currentPosition) {
         Log.v(TAG, "Started converting WAQI-Data");
         ArrayList<Station> waqiStationsList = new ArrayList<>();
+
+        Station tempStation;
+
+        try {
+            JSONObject waqiData = data.getJSONObject("data");
+            JSONObject iaqi = waqiData.getJSONObject("iaqi");
+            JSONObject iaqiCo = iaqi.getJSONObject("co");
+            double CO = iaqiCo.getDouble("v");
+            //tempStation.addMeasurement(Measurement new Measurement());
+            Log.v(TAG, "CO is: " + CO);
+
+        } catch (JSONException e) {
+            Log.e(TAG, "ERROR: "+e);
+        }
+
+
         return waqiStationsList;
     }
 }

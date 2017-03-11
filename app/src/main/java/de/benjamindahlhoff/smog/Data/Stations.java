@@ -4,10 +4,6 @@ import android.content.Context;
 import android.graphics.Color;
 import android.util.Log;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -91,22 +87,21 @@ public class Stations {
      * and store the corresponding color.
      */
     public void calculateMeanValues() {
-        AQI mAQI = new AQI(mContext);
 
         for (int i = 0; i < mStations.size(); i++) {
             // PM10
             if (mStations.get(i).getPM10Values().size() > 0) {
                 double means_pm10 = means(mStations.get(i).getPM10Values());
-                int pm10AQI = mAQI.calculateIndex(means_pm10, "PM10");
-                Measurement mPM10 = new Measurement("PM10", means_pm10, "µg/m3", pm10AQI, mAQI.getColor(pm10AQI));
+                int pm10AQI = AQI.calculateIndex(means_pm10, "PM10");
+                Measurement mPM10 = new Measurement("PM10", means_pm10, "µg/m3", pm10AQI, AQI.getColor(pm10AQI, mContext));
                 mStations.get(i).addMeasurement(mPM10);
             }
 
             // PM2.5
             if (mStations.get(i).getPM25Values().size() > 0) {
                 double means_pm25 = means(mStations.get(i).getPM25Values());
-                int pm25AQI = mAQI.calculateIndex(means_pm25, "PM25");
-                Measurement mPM25 = new Measurement("PM25", means_pm25, "µg/m3", pm25AQI, mAQI.getColor(pm25AQI));
+                int pm25AQI = AQI.calculateIndex(means_pm25, "PM25");
+                Measurement mPM25 = new Measurement("PM25", means_pm25, "µg/m3", pm25AQI, AQI.getColor(pm25AQI, mContext));
                 mStations.get(i).addMeasurement(mPM25);
             }
 
