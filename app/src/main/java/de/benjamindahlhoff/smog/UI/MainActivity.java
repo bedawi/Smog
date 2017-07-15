@@ -2,42 +2,35 @@ package de.benjamindahlhoff.smog.UI;
 
 import android.Manifest;
 import android.content.Context;
-import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.Button;
-import android.widget.RelativeLayout;
-import android.widget.TextView;
 import android.widget.Toast;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.List;
 
-import butterknife.BindView;
-import butterknife.ButterKnife;
-import butterknife.OnClick;
 import de.benjamindahlhoff.smog.Data.Interpreter_Luftdaten;
 import de.benjamindahlhoff.smog.Data.Interpreter_WAQI;
+import de.benjamindahlhoff.smog.Data.Position;
 import de.benjamindahlhoff.smog.Data.Station;
 import de.benjamindahlhoff.smog.Data.Stations;
-import de.benjamindahlhoff.smog.Data.Position;
 import de.benjamindahlhoff.smog.R;
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -69,7 +62,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         mContext = getApplicationContext();
         setContentView(R.layout.activity_main);
-        ButterKnife.bind(this);
+        // ButterKnife.bind(this);
 
         if (mCurrentPosition.getLongitude() == 0) {
             getCoarsePosition();
@@ -86,6 +79,23 @@ public class MainActivity extends AppCompatActivity {
             int longInt = (int) longi;
 
             loadFromStations("All");
+        }
+
+        SummaryFragment savedFragment = (SummaryFragment) getSupportFragmentManager().findFragmentByTag(SUMMARY_FRAGMENT);
+
+        if (savedFragment == null) {
+            ArrayList<Station> parcel = mStations.getStations();
+
+            Bundle bundle = new Bundle();
+            bundle.putParcelableArrayList(FEINSTAUB_STATIONS, parcel);
+
+            SummaryFragment fragment = new SummaryFragment();
+            fragment.setArguments(bundle);
+
+            FragmentManager fragmentManager = getSupportFragmentManager();
+            FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+            fragmentTransaction.add(R.id.placeholder, fragment, SUMMARY_FRAGMENT);
+            fragmentTransaction.commit();
         }
     }
 
@@ -256,7 +266,44 @@ public class MainActivity extends AppCompatActivity {
 
     private void refreshActivity() {
 
+        //int entries = getSupportFragmentManager().getBackStackEntryCount();
+        //FragmentManager.BackStackEntry backStackEntryAt = getSupportFragmentManager().getBackStackEntryAt(getSupportFragmentManager().getBackStackEntryCount());
+        //int currentFragment = backStackEntryAt.getId();
+        //Fragment fragment = getSupportFragmentManager().findFragmentById(currentFragment);
+        /**
+         * // Reload current fragment
+         Fragment frg = null;
+         frg = getSupportFragmentManager().findFragmentByTag("Your_Fragment_TAG");
+         final FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+         ft.detach(frg);
+         ft.attach(frg);
+         ft.commit();
+         */
+
+        Log.v(TAG, "Restarting Fragment");
+
+        Fragment fragment = getSupportFragmentManager().findFragmentByTag(SUMMARY_FRAGMENT);
+        FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
+        fragmentTransaction.detach(fragment);
+        fragmentTransaction.attach(fragment);
+        fragmentTransaction.commit();
+
+        /*
+        //SummaryFragment fragment = new SummaryFragment();
+
+        ArrayList<Station> parcel = mStations.getStations();
+        Bundle bundle = new Bundle();
+        bundle.putParcelableArrayList(FEINSTAUB_STATIONS, parcel);
+        fragment.setArguments(bundle);
+
+        //FragmentManager fragmentManager = getSupportFragmentManager();
+        //FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+        fragmentTransaction.add(R.id.placeholder, fragment, SUMMARY_FRAGMENT);
+        fragmentTransaction.commit(); */
+
+
     }
+
 
 
 
@@ -276,10 +323,6 @@ public class MainActivity extends AppCompatActivity {
 
         if (id == R.id.action_stations) {
             ArrayList<Station> parcel = mStations.getStations();
-
-            //Intent intent = new Intent(this, StationsListActivity.class);
-            //intent.putParcelableArrayListExtra(FEINSTAUB_STATIONS, parcel);
-            //startActivity(intent);
 
             Bundle bundle = new Bundle();
             bundle.putParcelableArrayList(FEINSTAUB_STATIONS, parcel);
